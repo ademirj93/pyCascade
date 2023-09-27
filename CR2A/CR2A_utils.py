@@ -32,7 +32,7 @@ def get_all_eval(input_path: str, N=5):
 
     files = os.listdir(input_path)
 
-    header = ["file", "precision", "recall", "MAP"]
+    header = ["Descritor", "precision", "recall", "MAP"]
 
     if not os.path.exists("./output"):
         os.makedirs("./output")
@@ -50,7 +50,7 @@ def get_all_eval(input_path: str, N=5):
         with open(input_file_path, "r") as input_file:
             content = input_file.read()
 
-            # Reading the class and ranked lists from the files
+        # Reading the class and ranked lists from the files
         class_list = readData.read_classes(list_file_path, classes_file_path)
         ranked_list = readData.read_ranked_lists_file_numeric(
             input_file_path, top_k=dataset_size
@@ -61,7 +61,7 @@ def get_all_eval(input_path: str, N=5):
         )
         MAP, MAP_list = get_MAP(ranked_list, class_list, dataset_size)
 
-        result = [file, precision, recall, MAP]
+        result = [file.split(".")[0], precision, recall, MAP]
 
         with open(output_file_path + ".csv", "a", newline="") as csv_file:
             csv_writter = csv.writer(
