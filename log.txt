@@ -1,0 +1,82 @@
+ # UNSUPERVISED DISTANCE LEARNING METHODS FRAMEWORK #
+
+
+ - GENERAL INFORMATION -
+ --------------------------------------
+ Task:             UDL
+ Method:           CPRR
+ Dataset Size:     1360
+ Image List File:  /mnt/d/rank_cascade/Dataset/flowers_lists.txt
+ Image Class File: /mnt/d/rank_cascade/Dataset/flowers_classes.txt
+ Input File:       /mnt/d/rank_cascade/Dataset/ranked_list/CNN-Resnet152.txt
+ Input Format:     RK NUM  (automatically detected)
+ Output File:      /mnt/d/rank_cascade/Examples/output
+ Output Format:    RK NUM
+ --------------------------------------
+
+
+ - METHOD PARAMETERS -
+ --------------------------------------
+ PARAM_CPRR_K = 20
+ PARAM_CPRR_L = 1360
+ PARAM_CPRR_T = 2
+ --------------------------------------
+
+
+ - EVALUATION RESULTS -
+ --------------------------------------
+ * Efficiency:
+	 Total Time of the Algorithm Execution: 0.0979 s
+
+ * Effectiveness:
+ Before: 
+	 P@5		0.8738
+	 P@10		0.8147
+	 P@15		0.7766
+	 P@20		0.7441
+	 P@30		0.6888
+	 P@50		0.6028
+	 P@80		0.4919
+	 Recall@5	0.0546
+	 Recall@10	0.1018
+	 Recall@15	0.1456
+	 Recall@20	0.1860
+	 Recall@30	0.2583
+	 Recall@50	0.3768
+	 Recall@80	0.4919
+	 MAP		0.5183
+ After: 
+	 P@5		0.9034
+	 P@10		0.8793
+	 P@15		0.8606
+	 P@20		0.8440
+	 P@30		0.8162
+	 P@50		0.7570
+	 P@80		0.6524
+	 Recall@5	0.0565
+	 Recall@10	0.1099
+	 Recall@15	0.1614
+	 Recall@20	0.2110
+	 Recall@30	0.3061
+	 Recall@50	0.4731
+	 Recall@80	0.6524
+	 MAP		0.6928
+ Relative Gains: 
+	 P@5		3.3827%
+	 P@10		7.9242%
+	 P@15		10.8123%
+	 P@20		13.4345%
+	 P@30		18.5082%
+	 P@50		25.5739%
+	 P@80		32.6345%
+	 Recall@5	3.3827%
+	 Recall@10	7.9242%
+	 Recall@15	10.8124%
+	 Recall@20	13.4345%
+	 Recall@30	18.5083%
+	 Recall@50	25.5739%
+	 Recall@80	32.6345%
+	 MAP		33.6802%
+ --------------------------------------
+
+ Log generated at 2023/9/23 18:31:12
