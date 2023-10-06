@@ -1,16 +1,19 @@
 import numpy as np
 
 
-def compute_map(rks, classes_list, map_depth=1000):
+def compute_map(rks, classes_list, map_depth=5000):
     map_list = []
     class_size_dict = get_class_size_dict(classes_list)
 
-    if len(rks) <= map_depth:
-        if len(rks) < map_depth:
-            print(
-                "Warning, depth larger than the ranked_list size, set depth to max ranked list size!")
+    if len(rks) < map_depth:
+        print("Warning, depth larger than the ranked_list size, set depth to max ranked list size!")
         map_depth = len(rks)
         # print(map_depth)
+
+    if len(rks[0]) < map_depth:
+      print(
+        "Warning, depth larger than the ranked_list size, set depth to max ranked list size!")   
+      map_depth = len(rks[0])  
 
     for i, rk in enumerate(rks):
         acum = 0
@@ -30,7 +33,7 @@ def compute_map(rks, classes_list, map_depth=1000):
         map_list.append(acum/class_size_dict[cl_i])
         # map_list.append(acum/class_size_dict[cl_i]) ###
     map_value = np.mean(map_list)
-    return round(map_value, 4), map_list
+    return round(map_value,4),map_list
 
 
 def get_class_size_dict(class_list):

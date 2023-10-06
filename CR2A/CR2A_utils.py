@@ -1,7 +1,8 @@
 from CR2A.CR2A_func import *
+from CR2A.CR2A_effectiveness import *
 from pyUDLF.utils import readData
-import os
-import csv
+import os, csv
+import pandas as pd
 
 
 def get_all_eval(input_path: str, N=5):
@@ -32,7 +33,7 @@ def get_all_eval(input_path: str, N=5):
 
     files = os.listdir(input_path)
 
-    header = ["Descritor", "precision", "recall", "MAP"]
+    header = ["descriptor", "precision", "recall", "MAP"]
 
     if not os.path.exists("./output"):
         os.makedirs("./output")
@@ -69,5 +70,142 @@ def get_all_eval(input_path: str, N=5):
             )
 
             csv_writter.writerow(result)
+
+    return
+
+
+def aggregate_ranked_lists(
+    dataset_name: str,
+):
+    file = f"./output/{dataset_name}"
+
+    try:
+        data_frame = pd.read_csv(f"{file}.csv")
+    except:
+        # If file couldn't be oppened return a message
+        print(f"{file}.csv couldn't be found!")
+        exit()
+
+    map_sort = data_frame.sort_values(by="MAP", ascending=False)
+    map_sort = map_sort.reset_index(drop=True)
+
+    precision_sort = data_frame.sort_values(by="precision", ascending=False)
+    precision_sort = precision_sort.reset_index(drop=True)
+
+    recall_sort = data_frame.sort_values(by="recall", ascending=False)
+    recall_sort = recall_sort.reset_index(drop=True)
+
+    # Crie uma estrutura de dados para armazenar a contagem de votos (pontuações) para cada elemento
+    score = {}
+
+    concat_data_frame = pd.concat([map_sort, precision_sort, recall_sort])
+
+    # Calcule a pontuação de Borda Count para cada elemento
+    for index, row in concat_data_frame.iterrows():
+        descriptor = row[
+            "descriptor"
+        ]  # Substitua 'Elemento' pelo nome da coluna apropriada
+        if descriptor in score:
+            score[descriptor] += index  # Soma a posição
+        else:
+            score[descriptor] = index
+
+    # Converta a estrutura de dados de pontuação em um DataFrame
+    df_score = pd.DataFrame(list(score.items()), columns=["descriptor", "score"])
+
+    # Ordene os elementos por pontuação em ordem decrescente
+    df_score = df_score.sort_values(by="score")
+    df_score = df_score.reset_index(drop=True)
+
+    # print(df_score)
+
+    df_score.to_csv(f"{file}_evall_borda.txt", sep=",")
+
+    return
+
+
+def aggregate_ranked_lists_effectiveness(
+    dataset_name: str,
+):
+    file = f"./output/{dataset_name}"
+
+    try:
+        data_frame = pd.read_csv(f"{file}.csv")
+    except:
+        # If file couldn't be oppened return a message
+        print(f"{file}.csv couldn't be found!")
+        exit()
+
+    authority_sort = data_frame.sort_values(by="authority", ascending=False)
+    authority_sort = authority_sort.reset_index(drop=True)
+
+    authority_sort[["descriptor", "authority"]].to_csv(
+        f"{file}_effectiveness_authority.txt", sep=","
+    )
+
+    print(f"{file}_effectiveness_authority.txt sucefully created")
+
+    reciprocal_sort = data_frame.sort_values(by="reciprocal", ascending=False)
+    reciprocal_sort = reciprocal_sort.reset_index(drop=True)
+
+    reciprocal_sort[["descriptor", "reciprocal"]].to_csv(
+        f"{file}_effectiveness_reciprocal.txt", sep=","
+    )
+
+    print(f"{file}_effectiveness_reciprocal.txt sucefully created")
+
+    # Crie uma estrutura de dados para armazenar a contagem de votos (pontuações) para cada elemento
+    score = {}
+
+    concat_data_frame = pd.concat([authority_sort, reciprocal_sort])
+
+    # Calcule a pontuação de Borda Count para cada elemento
+    for index, row in concat_data_frame.iterrows():
+        descriptor = row[
+            "descriptor"
+        ]  # Substitua 'Elemento' pelo nome da coluna apropriada
+        if descriptor in score:
+            score[descriptor] += index  # Soma a posição
+        else:
+            score[descriptor] = index
+
+    # Converta a estrutura de dados de pontuação em um DataFrame
+    df_score = pd.DataFrame(list(score.items()), columns=["descriptor", "score"])
+
+    # Ordene os elementos por pontuação em ordem decrescente
+    df_score = df_score.sort_values(by="score")
+    df_score = df_score.reset_index(drop=True)
+
+    # print(df_score)
+
+    df_score.to_csv(f"{file}_effectiveness_borda.txt", sep=",")
+    print(f"{file}_effectiveness_borda.txt sucefully created")
+    return
+
+
+def save_effectiveness_scores(
+    dataset_name: str, authority_score: dict, reciprocal_score: dict
+):
+    file = f"./output/{dataset_name}.csv"
+
+    try:
+        data_frame = pd.read_csv(f"{file}")
+    except:
+        # If file couldn't be oppened return a message
+        print(f"{file}.csv couldn't be found!")
+        exit()
+
+    if "authority" not in data_frame.columns:
+        data_frame["authority"] = None
+
+    if "reciprocal" not in data_frame.columns:
+        data_frame["reciprocal"] = None
+
+    data_frame["authority"] = authority_score.values()
+    data_frame["reciprocal"] = reciprocal_score.values()
+
+    data_frame.to_csv(file)
+
+    print(f"File {file.split('/')[-1]} updated successfully!")
 
     return
