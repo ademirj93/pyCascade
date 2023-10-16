@@ -1,32 +1,10 @@
-from pyUDLF import run_calls as udlf
-from CR2A.CR2A_utils import *
-from CR2A.CR2A_effectiveness import *
-import os
+from CR2A.CR2A_calls import *
 
-
-# rootDir: str -> root path of code
-rootDir = os.getcwd()
-
-# authority/reciprocal/both
-function_eff = "both"
 
 dataset_name = "oxford17flowers"
+top_k = 100
+top_m = 10
 
-# Setting UDLF files (udlf/config.ini)
-udlf.setBinaryPath(f"{rootDir}/UDLF/bin/udlf")
-udlf.setConfigPath(f"{rootDir}/UDLF/bin/config.ini")
+#mode = b - borda / a - authority / r - reciprocal {For default mode is "b" to calculate borda ranking}
+call_cascating_aggregagtion(dataset_name, top_k, top_m)
 
-dataset_path = f"{rootDir}/dataset/{dataset_name}"
-
-get_all_eval(dataset_path)
-
-aggregate_ranked_lists(dataset_name)
-effectiveness_func = compute_authority_score
-
-
-authority, reciprocal = get_effectiveness_rk(function_eff, dataset_path, 200)
-# save_effectiveness_scores(dataset_name, authority, reciprocal)
-
-save_effectiveness_scores(dataset_name, authority, reciprocal)
-
-aggregate_ranked_lists_effectiveness(dataset_name)

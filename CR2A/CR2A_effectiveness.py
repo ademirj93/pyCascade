@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+from CR2A.CR2A_utils import *
 import os, csv
 from pyUDLF.utils import readData
 
@@ -26,13 +27,6 @@ def load_ranked_lists(descriptors: list, path_rks: str, top_k: int):
     print(" Done!")
 
     return ranked_lists
-
-
-# acho que ta pronto puta
-# deixei brilhantemente explicado para n ter duvida
-# quem tiver duvida é viado
-# mama me olhando
-
 
 def compute_authority_score(ranked_lists: list, index: int, top_k: int):
     score = 0
@@ -66,7 +60,7 @@ def compute_reciprocal_score(ranked_lists: list, index: int, top_k: int):
     return result_score / (top_k**2)
 
 
-def compute_rk_effectiveness(
+def compute_effectiveness_pass(
     descriptors: list, ranked_lists: dict, effectiveness_function, top_k: int
 ):
     result = {}
@@ -86,46 +80,27 @@ def compute_rk_effectiveness(
     return result
 
 
-def get_effectiveness_rk(effectivenes_function: str, input_path: str, top_k: int):
+def get_effectiveness_rk(input_path: str, top_k: int):
+    
+    dataset_name = input_path.split("/")[-1]
+
     input_path = input_path + "/ranked_lists"
 
     descriptors = list_descriptors(input_path)
 
     ranked_lists = load_ranked_lists(descriptors, input_path, top_k)
 
-    if effectivenes_function == "authority":
-        print("Computing authorithy score...")
-        effectivenes_function = compute_authority_score
-        authority = compute_rk_effectiveness(
-            descriptors, ranked_lists, effectivenes_function, top_k
-        )
-        print("Complete!")
-        return authority
-    elif effectivenes_function == "reciprocal":
-        print("Computing reciprocal score...")
-        effectivenes_function = compute_reciprocal_score
-        reciprocal = compute_rk_effectiveness(
-            descriptors, ranked_lists, effectivenes_function, top_k
-        )
-        print("Complete!")
+    print("Computing authorithy and reciprocal score...")
+   
 
-        return reciprocal
+    authority = compute_effectiveness_pass(descriptors, ranked_lists, compute_authority_score, top_k)
 
-    elif effectivenes_function == "both":
-        print("Computing authorithy and reciprocal score...")
-        effectivenes_function = compute_authority_score
+    reciprocal = compute_effectiveness_pass(descriptors, ranked_lists, compute_reciprocal_score, top_k)
 
-        authority = compute_rk_effectiveness(
-            descriptors, ranked_lists, effectivenes_function, top_k
-        )
 
-        effectivenes_function = compute_reciprocal_score
+    print("Complete!")
 
-        reciprocal = compute_rk_effectiveness(
-            descriptors, ranked_lists, effectivenes_function, top_k
-        )
-        print("Complete!")
-        return authority, reciprocal
-    else:
-        print(f"Effectiveness {effectivenes_function} coudn't be found! ")
-        return
+    return authority,reciprocal
+
+
+
