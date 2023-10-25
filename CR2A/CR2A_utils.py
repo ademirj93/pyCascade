@@ -1,12 +1,77 @@
-from CR2A.CR2A_evaluation import *
-from CR2A.CR2A_effectiveness import *
+import CR2A.CR2A_evaluation as evall
+import CR2A.CR2A_effectiveness as effective
+import CR2A.CR2A_aggregate as aggregate
 from pyUDLF.utils import readData
-import os, csv
+import os, csv, shutil, re
 import pandas as pd
 
 
+def get_factorial(value: int):
+
+    count = 1
+    factorial = 1
+
+    while count <= value:
+        factorial *= count
+        count += 1
+
+    return factorial
+
+
+def paths_validations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mode: str):
+
+    rootDir = os.getcwd()
+    output_path = f"{rootDir}/output"
+    output_dataset_path = f"{output_path}/output_{dataset_name}_{outlayer}_topk={top_k}_topm={top_m}{mode}"
+    output_log_path = f"{output_dataset_path}/logs_{dataset_name}_topk={top_k}"
+    output_rk_fusion_path = f"{output_dataset_path}/rk_fusions_{dataset_name}_topk={top_k}"
+    output_final_result = f"{output_dataset_path}/rk_cascaded_{dataset_name}_topk={top_k}"
+    output_top_m_results = f"{output_dataset_path}/topm_rk_cascaded_{dataset_name}_topk={top_k}"
+
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    if not os.path.exists("./output"):
+        os.makedirs("./output")
+
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    if not os.path.exists(output_log_path):
+        os.makedirs(output_log_path)
+
+    if not os.path.exists(output_rk_fusion_path):
+        os.makedirs(output_rk_fusion_path)
+
+    if not os.path.exists(output_final_result):
+        os.mkdir(output_final_result)
+
+    if not os.path.exists(output_top_m_results):
+        os.mkdir(output_top_m_results)
+
+    return output_log_path, output_dataset_path, output_rk_fusion_path, output_final_result, output_top_m_results
+
+
+def set_mode_file(option: str):
+
+    match option.upper():
+        case "B":
+            aggregate_file_type = "borda"
+        case "A":
+            aggregate_file_type = "authority"
+        case "R":
+            aggregate_file_type = "reciprocal"
+        case _:
+            print("Unknown option for effectiveness topk file!")
+            exit()
+
+    print(aggregate_file_type)
+
+    return aggregate_file_type
+
+
 def get_dataset_size(classes_file_path: str):
-    
+
     # Try open text file to count the classes
     try:
         data = open(classes_file_path, "r")
@@ -28,6 +93,7 @@ def get_dataset_size(classes_file_path: str):
 
     return dataset_size
 
+
 def get_lists_and_classes_txt(input_path: str):
 
     print("Getting lists and classes files...")
@@ -39,25 +105,28 @@ def get_lists_and_classes_txt(input_path: str):
         print(f"The way {input_path} couldn't be found!")
         exit()
 
-    files_list_txt = [file_list_txt for file_list_txt in files if "_lists.txt" in file_list_txt]
+    files_list_txt = [
+        file_list_txt for file_list_txt in files if "_lists.txt" in file_list_txt]
     for file_list_txt in files_list_txt:
         list_file_path = os.path.join(input_path, file_list_txt)
 
-    files_classes_txt = [file_classes_txt for file_classes_txt in files if "_classes.txt" in file_classes_txt]
+    files_classes_txt = [
+        file_classes_txt for file_classes_txt in files if "_classes.txt" in file_classes_txt]
     for file_classes_txt in files_classes_txt:
         classes_file_path = os.path.join(input_path, file_classes_txt)
-    
+
     print("Done!")
 
     return list_file_path, classes_file_path
 
+
 def aggregate_ranked_lists(
-    dataset_name: str,
+    dataset_name: str, output_dataset_path: str
 ):
-    
+
     print("Evaluation aggregation started...")
-    
-    file = f"./output/{dataset_name}"
+
+    file = f"{output_dataset_path}/{dataset_name}"
 
     try:
         data_frame = pd.read_csv(f"{file}.csv")
@@ -91,7 +160,8 @@ def aggregate_ranked_lists(
             score[descriptor] = index
 
     # Converta a estrutura de dados de pontuação em um DataFrame
-    df_score = pd.DataFrame(list(score.items()), columns=["descriptor", "score"])
+    df_score = pd.DataFrame(list(score.items()), columns=[
+                            "descriptor", "score"])
 
     # Ordene os elementos por pontuação em ordem decrescente
     df_score = df_score.sort_values(by="score")
@@ -107,12 +177,12 @@ def aggregate_ranked_lists(
 
 
 def aggregate_ranked_lists_effectiveness(
-    dataset_name: str, top_k: int
+    dataset_name: str, top_k: int, output_dataset_path: str
 ):
-    
+
     print(f"Aggregation effectiveness values started...")
 
-    file = f"./output/{dataset_name}"
+    file = f"{output_dataset_path}/{dataset_name}"
 
     try:
         data_frame = pd.read_csv(f"{file}.csv")
@@ -155,7 +225,8 @@ def aggregate_ranked_lists_effectiveness(
             score[descriptor] = index
 
     # Converta a estrutura de dados de pontuação em um DataFrame
-    df_score = pd.DataFrame(list(score.items()), columns=["descriptor", "score"])
+    df_score = pd.DataFrame(list(score.items()), columns=[
+                            "descriptor", "score"])
 
     # Ordene os elementos por pontuação em ordem decrescente
     df_score = df_score.sort_values(by="score")
@@ -171,14 +242,15 @@ def aggregate_ranked_lists_effectiveness(
     return
 
 
-def save_effectiveness_scores(dataset_name: str, authority_score: dict, reciprocal_score: dict):
-    file = f"./output/{dataset_name}.csv"
+def save_effectiveness_scores(dataset_name: str, authority_score: dict, reciprocal_score: dict, output_dataset_path: str):
+
+    file = f"{output_dataset_path}/{dataset_name}.csv"
 
     try:
-        data_frame = pd.read_csv(f"{file}")
+        data_frame = pd.read_csv(file)
     except:
         # If file couldn't be oppened return a message
-        print(f"{file}.csv couldn't be found!")
+        print(f"{file} couldn't be found!")
         exit()
 
     if "authority" not in data_frame.columns:
@@ -194,18 +266,73 @@ def save_effectiveness_scores(dataset_name: str, authority_score: dict, reciproc
 
     print(f"File {file.split('/')[-1]} updated successfully!")
 
-
-
     return
 
 
-def get_all_eval(input_path: str, N=5):
-    
-    fl = input_path.split("/")[-1]
-    print ()
-    print(fl)
+def save_effectiveness_result(dataset_name: str, output_dataset_path: str, results: list):
 
-    output_file_path = os.path.join(f"./output/{fl}", fl)
+    header = ["descriptor", "authority", "reciprocal"]
+
+    with open(f"{output_dataset_path}/{dataset_name}_after_cascade.csv", "w", newline="") as csv_file:
+        csv_writter = csv.writer(
+            csv_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        csv_writter.writerow(header)
+
+    for result in results:
+
+        with open(f"{output_dataset_path}/{dataset_name}_after_cascade.csv", "a", newline="") as csv_file:
+            csv_writter = csv.writer(
+                csv_file, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            )
+
+            csv_writter.writerow(result)
+
+    return
+
+def set_filter_outlayer(file_list: list, option: str):
+
+    rootDir = os.getcwd()
+
+    match option.lower():
+        
+        case "outlayer_file":
+            outlayer = f"{rootDir}/outlayer.txt"
+
+            try:
+                with open(outlayer, "r") as data:
+                    outlayer = [element.strip() for element in data.readlines()]
+                print("The outlayer list has been read successfully!")
+            except:
+                print(
+                f"Outlayer {outlayer} not found, then the process will run without filtering!")
+            outlayer = []
+        
+        
+            descriptors = [element for element in file_list if element not in outlayer]
+        
+        case "only_nn_descriptors":
+            
+            print("Filtering ranked lists of CNN and Transformers!")
+            descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element]
+        
+        case "only_classic_descriptors":
+
+            print("Filtering ranked lists of classic descriptors!")
+            descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element]
+
+        case _:
+            print("Unknown option for filtering!")
+            exit()
+        
+    return descriptors
+
+def get_all_eval(input_path: str,  output_dataset_path: str, outlayer: str, N=5):
+
+
+    dataset_name = input_path.split("/")[-1]
+
+    output_file_path = os.path.join(output_dataset_path, dataset_name)
 
     list_file_path, classes_file_path = get_lists_and_classes_txt(input_path)
 
@@ -214,12 +341,9 @@ def get_all_eval(input_path: str, N=5):
 
     input_path = input_path + "/ranked_lists"
 
-    files = os.listdir(input_path)
+    files = set_filter_outlayer(os.listdir(input_path), outlayer)
 
     header = ["descriptor", "precision", "recall", "MAP"]
-
-
-
 
     with open(output_file_path + ".csv", "w", newline="") as csv_file:
         csv_writter = csv.writer(
@@ -240,8 +364,9 @@ def get_all_eval(input_path: str, N=5):
             input_file_path, top_k=dataset_size
         )
 
-        precision, precision_list, recall, recall_list = get_precion_and_recall(ranked_list, class_list, N)
-        MAP, MAP_list = get_MAP(ranked_list, class_list, dataset_size)
+        precision, precision_list, recall, recall_list = evall.get_precion_and_recall(
+            ranked_list, class_list, N)
+        MAP, MAP_list = evall.get_MAP(ranked_list, class_list, dataset_size)
 
         result = [file.split(".")[0], precision, recall, MAP]
 
@@ -251,15 +376,55 @@ def get_all_eval(input_path: str, N=5):
             )
 
             csv_writter.writerow(result)
-    
-    aggregate_ranked_lists(fl)
-    
+
+    aggregate_ranked_lists(dataset_name,  output_dataset_path)
+
     return
 
-def call_save_effectiveness(dataset_name: str, authority: dict, reciprocal: dict, top_k:int):
 
-    save_effectiveness_scores(dataset_name,authority, reciprocal)
+def call_save_effectiveness(dataset_name: str, authority: dict, reciprocal: dict, top_k: int, output_dataset_path: str, filtering=False, result=[]):
 
-    aggregate_ranked_lists_effectiveness(dataset_name, top_k)
+    if not filtering:
+        save_effectiveness_scores(
+            dataset_name, authority, reciprocal, output_dataset_path)
+
+        aggregate_ranked_lists_effectiveness(
+            dataset_name, top_k, output_dataset_path)
+    elif filtering:
+
+        save_effectiveness_result(dataset_name, output_dataset_path, result)
+
+        aggregate_ranked_lists_effectiveness(
+            f"{dataset_name}_after_cascade", top_k, output_dataset_path)
+
+    return
+
+def call_copy_topm_files(topm_descriptors:list, output_rk_fusion_path: str, output_log_path: str,output_top_k_results: str):
+
+    for descriptor in topm_descriptors:
+        
+        origin_log = os.path.join(output_log_path, descriptor.split(".")[0]+".json")
+        origin_rk = os.path.join(output_rk_fusion_path, descriptor)
+
+        destiny_log = os.path.join(output_top_k_results, descriptor.split(".")[0]+".json")
+        destiny_rk = os.path.join(output_top_k_results, descriptor)
+
+        descriptor_desc = descriptor.split('.')[0]
+
+        try:
+            shutil.copy(origin_rk, destiny_rk)
+            print(f'Files txt of {descriptor_desc} sucessfuly copied!')
+        except FileNotFoundError:
+            print(f'Files txt of {descriptor_desc} do not exist!' )
+        except FileExistsError:
+            print(f'Files txt of {descriptor_desc} already exist!')
+    
+        try:
+            shutil.copy(origin_log, destiny_log)
+            print(f'Files json of {descriptor_desc} sucessfuly copied!')
+        except FileNotFoundError:
+            print(f'Files json of {descriptor_desc} do not exist!' )
+        except FileExistsError:
+            print(f'Files json of {descriptor_desc} already exist!')
 
     return

@@ -1,16 +1,4 @@
-from CR2A.CR2A_effectiveness import *
 from pyUDLF.utils import evaluation
-
-
-#def get_effectiveness_func(effectiveness_estimation_measure):
-#    if effectiveness_estimation_measure == "authority":
-#        return compute_authority_score
-
-#    if effectiveness_estimation_measure == "reciprocal":
-#        return compute_reciprocal_score
-
-#    print("\n ERROR: Unknown effec. estim. measure:", effectiveness_estimation_measure)
-#    exit(1)
 
 
 def get_precion_and_recall(ranked_lists: list, class_list: list, N: int):
@@ -25,3 +13,4 @@ def get_MAP(ranked_lists: list, class_list: list, dataset_size: int):
 
     return MAP, MAP_list
 
+#def get_gain()

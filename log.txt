@@ -5,14 +5,14 @@
  --------------------------------------
  Task:             FUSION
  Method:           CPRR
- Dataset Size:     5000
- Image List File:  /home/ademir/rank_cascade/dataset/corel5k/corel5k_lists.txt
- Image Class File: /home/ademir/rank_cascade/dataset/corel5k/corel5k_classes.txt
+ Dataset Size:     1360
+ Image List File:  /home/ademir/rank_cascade/dataset/oxford17flowers/flowers_lists.txt
+ Image Class File: /home/ademir/rank_cascade/dataset/oxford17flowers/flowers_classes.txt
  Input Files:
-                   (1) /home/ademir/rank_cascade/dataset/corel5k/ranked_lists/SPCEDD.txt
-                   (2) /home/ademir/rank_cascade/dataset/corel5k/ranked_lists/CNN-DPNet.txt
+                   (1) /home/ademir/rank_cascade/dataset/oxford17flowers/ranked_lists/CNN-FBResNet.txt
+                   (2) /home/ademir/rank_cascade/dataset/oxford17flowers/ranked_lists/CNN-NASnet-Large.txt
  Input Format:     RK NUM  (automatically detected)
- Output File:      ./output/output_corel5k/corel5k_SPCEDD+CNN-DPNet_topK=100_topM=10
+ Output File:      /home/ademir/rank_cascade/output/output_oxford17flowers_only_nn_descriptors_topk=80_topm=5b/rk_fusions_oxford17flowers_topk=80/oxford17flowers_CNN-FBResNet+CNN-NASnet-Large_topK=80_topM=5
  Output Format:    RK NUM
  --------------------------------------
 
@@ -20,7 +20,7 @@
  - METHOD PARAMETERS -
  --------------------------------------
  PARAM_CPRR_K = 20
- PARAM_CPRR_L = 5000
+ PARAM_CPRR_L = 1360
  PARAM_CPRR_T = 2
  --------------------------------------
 
@@ -28,23 +28,23 @@
  - EVALUATION RESULTS -
  --------------------------------------
  * Efficiency:
-	 Total Time of the Algorithm Execution: 35.7971 s
+	 Total Time of the Algorithm Execution: 0.8763 s
 
  * Effectiveness:
-	 P@4		0.9269
-	 P@5		0.9185
-	 P@10		0.8936
-	 P@15		0.8752
-	 P@20		0.8608
-	 P@30		0.8269
-	 P@50		0.7525
-	 P@100		0.5904
-	 Recall@4	0.0371
-	 Recall@5	0.0459
-	 Recall@10	0.0894
-	 Recall@20	0.1722
-	 Recall@40	0.3160
-	 MAP		0.6339
+	 P@4		0.8908
+	 P@5		0.8778
+	 P@10		0.8457
+	 P@15		0.8251
+	 P@20		0.8121
+	 P@30		0.7860
+	 P@50		0.7215
+	 P@100		0.5521
+	 Recall@4	0.0445
+	 Recall@5	0.0549
+	 Recall@10	0.1057
+	 Recall@20	0.2030
+	 Recall@40	0.3769
+	 MAP		0.6670
  --------------------------------------
 
- Log generated at 2023/10/16 19:3:13
+ Log generated at 2023/10/25 17:1:47

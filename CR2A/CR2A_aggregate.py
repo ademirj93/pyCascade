@@ -1,28 +1,21 @@
-from CR2A.CR2A_utils import *
+import CR2A.CR2A_utils as utils
 from pyUDLF import run_calls as udlf
 from pyUDLF.utils import inputType
 import pandas as pd
-from enum import Enum
-import os
-import json
+import os, json
 
 
-def read_list_top_m(dataset_path: str, list_complement: str, top_k: int, top_m: int):
+def read_list_top_m(dataset_path: str,output_dataset_path: str , list_complement: str, top_k: int, top_m: int, filtering=False):
 
     dataset_name = dataset_path.split("/")[-1]
 
-    file = f"./dataset/{dataset_name}/outlayer.txt"
-
-    try:
-        with open(file, "r") as data:
-            outlayer = [element.strip() for element in data.readlines()]
-        print("The outlayer list has been read successfully!")
-    except:
-        print(
-            f"Outlayer {file} not found, then the process will run without filtering!")
-        outlayer = []
-
-    file = f"./output/{dataset_name}_effectiveness_{list_complement}_topk={top_k}.txt"
+    
+    if not filtering:
+        file = f"{output_dataset_path}/{dataset_name}_effectiveness_{list_complement}_topk={top_k}.txt"
+    elif filtering:
+        file = f"{output_dataset_path}/{dataset_name}_after_cascade_effectiveness_{list_complement}_topk={top_k}.txt"
+    
+    print(f"\n {file} \n")
 
     data_frame = pd.DataFrame(pd.read_csv(file))
 
@@ -30,25 +23,15 @@ def read_list_top_m(dataset_path: str, list_complement: str, top_k: int, top_m: 
 
     descriptors = data_frame['descriptor'].values
 
-    descriptors = [
-        element for element in descriptors if element not in outlayer]
+    descriptors = [element for element in descriptors]
 
     descriptors = descriptors[:top_m]
 
     return descriptors
 
 
-def cascade_aggregate(dataset_path: str, option: str, top_k: int, top_m: int):
 
-    match option.upper():
-        case "B":
-            aggregate_file_type = "borda"
-        case "A":
-            aggregate_file_type = "authority"
-        case "R":
-            aggregate_file_type = "reciprocal"
-        case _:
-            print("Unknown option for effectiveness topk file!")
+def cascade_aggregate(list_method: str, dataset_path: str, option: str, top_k: int, top_m: int, output_log_path: str, output_dataset_path: str, output_rk_fusion_path: str):
 
     input_data = inputType.InputType()
     rootDir = os.getcwd()
@@ -57,29 +40,25 @@ def cascade_aggregate(dataset_path: str, option: str, top_k: int, top_m: int):
     udlf.setConfigPath(f"{rootDir}/UDLF/bin/config.ini")
 
     dataset_name = dataset_path.split("/")[-1]
-    if not os.path.exists(f"./output/output_{dataset_name}"):
-        os.makedirs(f"./output/output_{dataset_name}")
 
-    if not os.path.exists(f"./output/logs_{dataset_name}"):
-        os.makedirs(f"./output/logs_{dataset_name}")
-
-    lists_file_path, classes_file_path = get_lists_and_classes_txt(
+    lists_file_path, classes_file_path = utils.get_lists_and_classes_txt(
         dataset_path)
 
-    dataset_size = get_dataset_size(classes_file_path)
+    dataset_size = utils.get_dataset_size(classes_file_path)
 
     input_data.set_task("FUSION")
     input_data.set_ranked_lists_size(dataset_size)
     input_data.set_dataset_size(dataset_size)
     input_data.set_output_rk_format("NUM")
     input_data.set_output_file_format("RK")
-    input_data.list_method_info("CPRR")
+    input_data.list_method_info(list_method)
     input_data.set_classes_file(classes_file_path)
     input_data.set_lists_file(lists_file_path)
-    input_data.write_config(f"./output/config_{dataset_name}.ini")
+    input_data.write_config(
+        f"{output_dataset_path}/config_{dataset_name}.ini")
 
     descriptors = read_list_top_m(
-        dataset_path, aggregate_file_type, top_k, top_m)
+        dataset_path, output_dataset_path, utils.set_mode_file(option), top_k, top_m)
 
     dataset_path = dataset_path + "/ranked_lists/"
 
@@ -92,7 +71,7 @@ def cascade_aggregate(dataset_path: str, option: str, top_k: int, top_m: int):
             file_one = file_layer_one.split("/")[-1].split(".")[0]
             file_two = file_layer_two.split("/")[-1].split(".")[0]
             input_data.set_output_file_path(
-                f"./output/output_{dataset_name}/{dataset_name}_{file_one}+{file_two}_topK={top_k}_topM={top_m}")
+                f"{output_rk_fusion_path}/{dataset_name}_{file_one}+{file_two}_topK={top_k}_topM={top_m}")
 
             input_data.set_input_files([file_layer_one, file_layer_two])
 
@@ -101,9 +80,57 @@ def cascade_aggregate(dataset_path: str, option: str, top_k: int, top_m: int):
             # Getting the log values from the output
             return_values = output.get_log()
 
-
-
-            with open(f"./output/logs_{dataset_name}/{dataset_name}_{file_one}+{file_two}_topK={top_k}_topM={top_m}.json", "w") as file:
+            with open(f"{output_log_path}/{dataset_name}_{file_one}+{file_two}_topK={top_k}_topM={top_m}.json", "w") as file:
                 file.write(json.dumps(return_values))
+
+    return
+
+
+def final_cascade_aggregate(list_method: str, dataset_path: str, top_m: int, output_rk_fusion_path: str, cascade_size: int, output_final_result: str):
+
+    input_data = inputType.InputType()
+    rootDir = os.getcwd()
+
+    udlf.setBinaryPath(f"{rootDir}/UDLF/bin/udlf")
+    udlf.setConfigPath(f"{rootDir}/UDLF/bin/config.ini")
+
+    dataset_name = dataset_path.split("/")[-1]
+
+    lists_file_path, classes_file_path = utils.get_lists_and_classes_txt(
+        dataset_path)
+
+    dataset_size = utils.get_dataset_size(classes_file_path)
+
+    ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path) if file.endswith(".txt")]
+    ranked_lists = []
+
+    print(ranked_lists_files)
+    for rk in ranked_lists_files:
+        ranked_lists.append(f"{output_rk_fusion_path}/{rk}")
+
+
+    print(list_method)
+
+    input_data.set_task("FUSION")
+    input_data.set_ranked_lists_size(dataset_size)
+    input_data.set_dataset_size(dataset_size)
+    input_data.set_output_rk_format("NUM")
+    input_data.set_output_file_format("RK")
+    input_data.list_method_info(list_method)
+    input_data.set_classes_file(classes_file_path)
+    input_data.set_lists_file(lists_file_path)
+    input_data.set_param("NUM_INPUT_FUSION_FILES", cascade_size)
+    input_data.set_output_file_path(
+        f"{output_final_result}/cascaded_{dataset_name}_topM={top_m}")
+    input_data.set_input_files(ranked_lists)
+    input_data.write_config(
+        f"{output_final_result}/config_{dataset_name}_cascaded.ini")
+    output = udlf.run(input_data, get_output=True)
+
+    # Getting the log values from the output
+    return_values = output.get_log()
+
+    with open(f"{output_final_result}/cacaded_{dataset_name}_topM={top_m}.json", "w") as file:
+        file.write(json.dumps(return_values))
 
     return

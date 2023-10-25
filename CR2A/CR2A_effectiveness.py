@@ -1,7 +1,6 @@
 from multiprocessing import Pool
-from CR2A.CR2A_utils import *
-import os, csv
-from pyUDLF.utils import readData
+import CR2A.CR2A_utils as utils
+import os
 
 
 def list_descriptors(path):
@@ -23,10 +22,12 @@ def load_ranked_lists(descriptors: list, path_rks: str, top_k: int):
 
     print("\n Loading ranked lists...")
     for descriptor in descriptors:
-        ranked_lists[descriptor] = read_ranked_lists_file(descriptor, path_rks, top_k)
+        ranked_lists[descriptor] = read_ranked_lists_file(
+            descriptor, path_rks, top_k)
     print(" Done!")
 
     return ranked_lists
+
 
 def compute_authority_score(ranked_lists: list, index: int, top_k: int):
     score = 0
@@ -60,7 +61,7 @@ def compute_reciprocal_score(ranked_lists: list, index: int, top_k: int):
     return result_score / (top_k**2)
 
 
-def compute_effectiveness_pass(
+def compute_effectiveness_wrapper(
     descriptors: list, ranked_lists: dict, effectiveness_function, top_k: int
 ):
     result = {}
@@ -80,27 +81,24 @@ def compute_effectiveness_pass(
     return result
 
 
-def get_effectiveness_rk(input_path: str, top_k: int):
-    
-    dataset_name = input_path.split("/")[-1]
-
-    input_path = input_path + "/ranked_lists"
+def get_effectiveness_rk(input_path: str, top_k: int, outlayer: str):
 
     descriptors = list_descriptors(input_path)
 
+    descriptors = utils.set_filter_outlayer(descriptors, outlayer)
+
+    print(descriptors)
+    
     ranked_lists = load_ranked_lists(descriptors, input_path, top_k)
 
     print("Computing authorithy and reciprocal score...")
-   
 
-    authority = compute_effectiveness_pass(descriptors, ranked_lists, compute_authority_score, top_k)
+    authority = compute_effectiveness_wrapper(
+        descriptors, ranked_lists, compute_authority_score, top_k)
 
-    reciprocal = compute_effectiveness_pass(descriptors, ranked_lists, compute_reciprocal_score, top_k)
-
+    reciprocal = compute_effectiveness_wrapper(
+        descriptors, ranked_lists, compute_reciprocal_score, top_k)
 
     print("Complete!")
 
-    return authority,reciprocal
-
-
-
+    return authority, reciprocal
