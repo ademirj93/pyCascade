@@ -9,10 +9,13 @@
  Image List File:  /home/ademir/rank_cascade/dataset/oxford17flowers/flowers_lists.txt
  Image Class File: /home/ademir/rank_cascade/dataset/oxford17flowers/flowers_classes.txt
  Input Files:
-                   (1) /home/ademir/rank_cascade/dataset/oxford17flowers/ranked_lists/CNN-FBResNet.txt
-                   (2) /home/ademir/rank_cascade/dataset/oxford17flowers/ranked_lists/CNN-NASnet-Large.txt
+                   (1) /home/ademir/rank_cascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_rks_swintf_original_flowers+CNN-AlexNet_topK=80_topM=5.txt
+                   (2) /home/ademir/rank_cascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_rks_swintf_original_flowers+CNN-FBResNet_topK=80_topM=5.txt
+                   (3) /home/ademir/rank_cascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_rks_swintf_original_flowers+CNN-NASnet-Large_topK=80_topM=5.txt
+                   (4) /home/ademir/rank_cascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_rks_swintf_original_flowers+rks_vit-b16_original_flowers_topK=80_topM=5.txt
+                   (5) /home/ademir/rank_cascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_rks_vit-b16_original_flowers+CNN-FBResNet_topK=80_topM=5.txt
  Input Format:     RK NUM  (automatically detected)
- Output File:      /home/ademir/rank_cascade/output/output_oxford17flowers_only_nn_descriptors_topk=80_topm=5b/rk_fusions_oxford17flowers_topk=80/oxford17flowers_CNN-FBResNet+CNN-NASnet-Large_topK=80_topM=5
+ Output File:      /home/ademir/rank_cascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/cascaded_oxford17flowers_topM=5
  Output Format:    RK NUM
  --------------------------------------
 
@@ -28,23 +31,23 @@
  - EVALUATION RESULTS -
  --------------------------------------
  * Efficiency:
-	 Total Time of the Algorithm Execution: 0.8763 s
+	 Total Time of the Algorithm Execution: 1.8763 s
 
  * Effectiveness:
-	 P@4		0.8908
-	 P@5		0.8778
-	 P@10		0.8457
-	 P@15		0.8251
-	 P@20		0.8121
-	 P@30		0.7860
-	 P@50		0.7215
-	 P@100		0.5521
-	 Recall@4	0.0445
-	 Recall@5	0.0549
-	 Recall@10	0.1057
-	 Recall@20	0.2030
-	 Recall@40	0.3769
-	 MAP		0.6670
+	 P@4		0.9972
+	 P@5		0.9972
+	 P@10		0.9968
+	 P@15		0.9959
+	 P@20		0.9939
+	 P@30		0.9922
+	 P@50		0.9838
+	 P@100		0.7900
+	 Recall@4	0.0499
+	 Recall@5	0.0623
+	 Recall@10	0.1246
+	 Recall@20	0.2485
+	 Recall@40	0.4947
+	 MAP		0.9790
  --------------------------------------
 
- Log generated at 2023/10/25 17:1:47
+ Log generated at 2023/11/6 19:6:52

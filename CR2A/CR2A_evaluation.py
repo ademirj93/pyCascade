@@ -13,4 +13,8 @@ def get_MAP(ranked_lists: list, class_list: list, dataset_size: int):
 
     return MAP, MAP_list
 
-#def get_gain()
+def get_gain(before_rankedlist: list, after_rankedlist: list, classes_list: list, depth: int):
+
+    gain_list,gain_mean_percent, gain_mean = evaluation.compute_gain(before_rankedlist, after_rankedlist, classes_list, depth)
+
+    return gain_list,gain_mean_percent, gain_mean

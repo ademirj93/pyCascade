@@ -9,7 +9,7 @@ def list_descriptors(path):
 
 def read_ranked_lists_file(descriptor: str, path_rks: str, top_k: int):
     file_path = os.path.join(path_rks, descriptor) + ".txt"
-    print("\tReading file", file_path)
+    #print("\tReading file", file_path)
     with open(file_path, "r") as file:
         return [
             [int(rank) for rank in line.strip().split(" ")][:top_k]
@@ -91,7 +91,7 @@ def get_effectiveness_rk(input_path: str, top_k: int, outlayer: str):
     
     ranked_lists = load_ranked_lists(descriptors, input_path, top_k)
 
-    print("Computing authorithy and reciprocal score...")
+    print("\nComputing authorithy and reciprocal score...")
 
     authority = compute_effectiveness_wrapper(
         descriptors, ranked_lists, compute_authority_score, top_k)
@@ -99,6 +99,6 @@ def get_effectiveness_rk(input_path: str, top_k: int, outlayer: str):
     reciprocal = compute_effectiveness_wrapper(
         descriptors, ranked_lists, compute_reciprocal_score, top_k)
 
-    print("Complete!")
+    print("Done!")
 
     return authority, reciprocal

@@ -1,28 +1,14 @@
 import CR2A.CR2A_evaluation as evall
-import CR2A.CR2A_effectiveness as effective
-import CR2A.CR2A_aggregate as aggregate
 from pyUDLF.utils import readData
-import os, csv, shutil, re
+import os, csv, shutil
 import pandas as pd
 
 
-def get_factorial(value: int):
-
-    count = 1
-    factorial = 1
-
-    while count <= value:
-        factorial *= count
-        count += 1
-
-    return factorial
-
-
-def paths_validations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mode: str):
+def paths_validations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mode: str, list_method_cascade: str,list_method_final: str):
 
     rootDir = os.getcwd()
     output_path = f"{rootDir}/output"
-    output_dataset_path = f"{output_path}/output_{dataset_name}_{outlayer}_topk={top_k}_topm={top_m}{mode}"
+    output_dataset_path = f"{output_path}/output_{dataset_name}_layerone-{list_method_cascade}_layertwo-{list_method_final}_{outlayer}_topk={top_k}_topm={top_m}{mode}"
     output_log_path = f"{output_dataset_path}/logs_{dataset_name}_topk={top_k}"
     output_rk_fusion_path = f"{output_dataset_path}/rk_fusions_{dataset_name}_topk={top_k}"
     output_final_result = f"{output_dataset_path}/rk_cascaded_{dataset_name}_topk={top_k}"
@@ -62,10 +48,8 @@ def set_mode_file(option: str):
         case "R":
             aggregate_file_type = "reciprocal"
         case _:
-            print("Unknown option for effectiveness topk file!")
+            print("\nUnknown option for effectiveness topk file!")
             exit()
-
-    print(aggregate_file_type)
 
     return aggregate_file_type
 
@@ -78,7 +62,7 @@ def get_dataset_size(classes_file_path: str):
     except:
         # If file couldn't be oppened return a message
         fileName = classes_file_path.split("/")[-1]
-        print(f"The file {fileName} couldn't be found to count function!")
+        print(f"\nThe file {fileName} couldn't be found to count function!")
         exit()
 
     # Create a list for all elements in the file
@@ -96,7 +80,7 @@ def get_dataset_size(classes_file_path: str):
 
 def get_lists_and_classes_txt(input_path: str):
 
-    print("Getting lists and classes files...")
+    print("\nGetting lists and classes files...")
 
     try:
         files = os.listdir(input_path)
@@ -124,7 +108,7 @@ def aggregate_ranked_lists(
     dataset_name: str, output_dataset_path: str
 ):
 
-    print("Evaluation aggregation started...")
+    print("\nEvaluation aggregation started...")
 
     file = f"{output_dataset_path}/{dataset_name}"
 
@@ -180,7 +164,7 @@ def aggregate_ranked_lists_effectiveness(
     dataset_name: str, top_k: int, output_dataset_path: str
 ):
 
-    print(f"Aggregation effectiveness values started...")
+    print(f"\nAggregation effectiveness values started...")
 
     file = f"{output_dataset_path}/{dataset_name}"
 
@@ -198,7 +182,7 @@ def aggregate_ranked_lists_effectiveness(
         f"{file}_effectiveness_authority_topk={top_k}.txt", sep=","
     )
 
-    print(f"{file}_effectiveness_authority_topk={top_k}.txt sucefully created")
+    print(f"\n{file}_effectiveness_authority_topk={top_k}.txt sucefully created")
 
     reciprocal_sort = data_frame.sort_values(by="reciprocal", ascending=False)
     reciprocal_sort = reciprocal_sort.reset_index(drop=True)
@@ -250,7 +234,7 @@ def save_effectiveness_scores(dataset_name: str, authority_score: dict, reciproc
         data_frame = pd.read_csv(file)
     except:
         # If file couldn't be oppened return a message
-        print(f"{file} couldn't be found!")
+        print(f"\n{file} couldn't be found!")
         exit()
 
     if "authority" not in data_frame.columns:
@@ -264,7 +248,7 @@ def save_effectiveness_scores(dataset_name: str, authority_score: dict, reciproc
 
     data_frame.to_csv(file)
 
-    print(f"File {file.split('/')[-1]} updated successfully!")
+    print(f"\nFile {file.split('/')[-1]} updated successfully!")
 
     return
 
@@ -302,10 +286,10 @@ def set_filter_outlayer(file_list: list, option: str):
             try:
                 with open(outlayer, "r") as data:
                     outlayer = [element.strip() for element in data.readlines()]
-                print("The outlayer list has been read successfully!")
+                print("\nThe outlayer list has been read successfully!")
             except:
                 print(
-                f"Outlayer {outlayer} not found, then the process will run without filtering!")
+                f"\nOutlayer {outlayer} not found, then the process will run without filtering!")
             outlayer = []
         
         
@@ -313,16 +297,16 @@ def set_filter_outlayer(file_list: list, option: str):
         
         case "only_nn_descriptors":
             
-            print("Filtering ranked lists of CNN and Transformers!")
+            print("\nFiltering ranked lists of CNN and Transformers!")
             descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element]
         
         case "only_classic_descriptors":
 
-            print("Filtering ranked lists of classic descriptors!")
+            print("\nFiltering ranked lists of classic descriptors!")
             descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element]
 
         case _:
-            print("Unknown option for filtering!")
+            print("\nUnknown option for filtering!")
             exit()
         
     return descriptors
@@ -413,7 +397,7 @@ def call_copy_topm_files(topm_descriptors:list, output_rk_fusion_path: str, outp
 
         try:
             shutil.copy(origin_rk, destiny_rk)
-            print(f'Files txt of {descriptor_desc} sucessfuly copied!')
+            #print(f'Files txt of {descriptor_desc} sucessfuly copied!')
         except FileNotFoundError:
             print(f'Files txt of {descriptor_desc} do not exist!' )
         except FileExistsError:
@@ -421,10 +405,48 @@ def call_copy_topm_files(topm_descriptors:list, output_rk_fusion_path: str, outp
     
         try:
             shutil.copy(origin_log, destiny_log)
-            print(f'Files json of {descriptor_desc} sucessfuly copied!')
+            #print(f'Files json of {descriptor_desc} sucessfuly copied!')
         except FileNotFoundError:
             print(f'Files json of {descriptor_desc} do not exist!' )
         except FileExistsError:
             print(f'Files json of {descriptor_desc} already exist!')
 
     return
+
+def orderbymap_csv(dataset_name: str, outuput_dataset_path: str):
+    
+
+    dataframe = pd.read_csv(f"{outuput_dataset_path}/{dataset_name}.csv")
+
+    dataframe = dataframe.sort_values(by="MAP", ascending=False)
+    dataframe = dataframe.reset_index(drop=True)
+
+    dataframe[["descriptor","precision","recall","MAP","authority","reciprocal"]].to_csv(f"{outuput_dataset_path}/{dataset_name}.csv", index=False)
+    
+    best_isolated = dataframe["descriptor"].iloc[0]
+
+    return best_isolated
+
+def computing_gain (dataset_path: str, output_dataset_path: str, best_isolated: str, topM: int):
+
+    print(f"Computing gain between {best_isolated} and the result of cascade process...")
+
+    
+    dataset_name = dataset_path.split("/")[-1]
+
+    rkslist, classes_list = get_lists_and_classes_txt(dataset_path)
+
+    dataset_size = get_dataset_size(classes_list)
+
+    classes_list = readData.read_classes(rkslist, classes_list)
+
+    before_rankedlist = readData.read_ranked_lists_file_numeric(f"{dataset_path}/ranked_lists/{best_isolated}.txt", dataset_size)
+    after_rankedlist = readData.read_ranked_lists_file_numeric(f"{output_dataset_path}/cascaded_{dataset_name}_topM={topM}.txt", dataset_size)
+
+    
+
+    gain_list,gain_mean_percent, gain_mean  = evall.get_gain(before_rankedlist,after_rankedlist, classes_list, dataset_size)
+
+    return gain_list,gain_mean_percent, gain_mean
+
+

@@ -5,18 +5,29 @@ import pandas as pd
 import os, json
 
 
-def read_list_top_m(dataset_path: str,output_dataset_path: str , list_complement: str, top_k: int, top_m: int, filtering=False):
+def read_list_top_m(dataset_path: str, output_dataset_path: str, list_complement: str, top_k: int, top_m: int, filtering=False):
+    """
+    Reads a CSV file containing a column of descriptors and returns a list of the top `top_m` descriptors.
 
+    Args:
+        dataset_path (str): The path to the dataset file.
+        output_dataset_path (str): The path containing the results obtained by calculating the effectiveness estimate..
+        list_complement (str): The complement of the list, i.e. which estimation mode will be considered between Authority, Reciprocall and the aggregation of both through the Borda methodology.
+        top_k (int): The number of top elements considered in the effectiveness estimate.
+        top_m (int): The number of top descriptors to return.
+        filtering (bool, optional): Whether to apply filtering or not. Defaults to False.
+
+    Returns:
+        list: A list of the top `top_m` descriptors.
+    """
+    
     dataset_name = dataset_path.split("/")[-1]
 
-    
     if not filtering:
         file = f"{output_dataset_path}/{dataset_name}_effectiveness_{list_complement}_topk={top_k}.txt"
     elif filtering:
         file = f"{output_dataset_path}/{dataset_name}_after_cascade_effectiveness_{list_complement}_topk={top_k}.txt"
     
-    print(f"\n {file} \n")
-
     data_frame = pd.DataFrame(pd.read_csv(file))
 
     descriptors = []
@@ -47,11 +58,12 @@ def cascade_aggregate(list_method: str, dataset_path: str, option: str, top_k: i
     dataset_size = utils.get_dataset_size(classes_file_path)
 
     input_data.set_task("FUSION")
+    input_data.set_method_name(list_method.upper())
     input_data.set_ranked_lists_size(dataset_size)
     input_data.set_dataset_size(dataset_size)
     input_data.set_output_rk_format("NUM")
     input_data.set_output_file_format("RK")
-    input_data.list_method_info(list_method)
+    #input_data.list_method_info(list_method.upper())
     input_data.set_classes_file(classes_file_path)
     input_data.set_lists_file(lists_file_path)
     input_data.write_config(
@@ -104,19 +116,17 @@ def final_cascade_aggregate(list_method: str, dataset_path: str, top_m: int, out
     ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path) if file.endswith(".txt")]
     ranked_lists = []
 
-    print(ranked_lists_files)
     for rk in ranked_lists_files:
         ranked_lists.append(f"{output_rk_fusion_path}/{rk}")
 
-
-    print(list_method)
-
     input_data.set_task("FUSION")
+    input_data.set_method_name(list_method.upper())
     input_data.set_ranked_lists_size(dataset_size)
     input_data.set_dataset_size(dataset_size)
+    input_data.set_param("INPUT_FILE_FORMAT", "RK")
     input_data.set_output_rk_format("NUM")
     input_data.set_output_file_format("RK")
-    input_data.list_method_info(list_method)
+    #input_data.list_method_info(list_method.upper())
     input_data.set_classes_file(classes_file_path)
     input_data.set_lists_file(lists_file_path)
     input_data.set_param("NUM_INPUT_FUSION_FILES", cascade_size)
