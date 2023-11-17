@@ -5,17 +5,14 @@ def compute_map(rks, classes_list, map_depth=5000):
     map_list = []
     class_size_dict = get_class_size_dict(classes_list)
 
-    if len(rks) < map_depth:
+    if len(rks) < map_depth or len(rks[0]) < map_depth:
         print("Warning, depth larger than the ranked_list size, set depth to max ranked list size!")
         map_depth = len(rks)
+        map_depth = len(rks[0])
         # print(map_depth)
 
-    if len(rks[0]) < map_depth:
-      print(
-        "Warning, depth larger than the ranked_list size, set depth to max ranked list size!")   
-      map_depth = len(rks[0])  
-
     for i, rk in enumerate(rks):
+        #print(rk)
         acum = 0
         value = 0
         # print(rk)
@@ -26,10 +23,11 @@ def compute_map(rks, classes_list, map_depth=5000):
 
         for j in range(map_depth):
             cl_j = classes_list[rk[j]]
+            
             if cl_i == cl_j:
                 value += 1
                 acum += value/(j+1)
-
+            
         map_list.append(acum/class_size_dict[cl_i])
         # map_list.append(acum/class_size_dict[cl_i]) ###
     map_value = np.mean(map_list)
@@ -124,14 +122,14 @@ def compute_gain(before_rks, after_rks, classes_list, depth, measure="MAP", verb
             before_rks, classes_list, depth)
         after_mean, after_list = compute_recall(after_rks, classes_list, depth)
 
-    #gain_mean = round(after_mean - before_mean, 4)
+    gain_mean = round(after_mean - before_mean, 4)
     # print("aqui")
-    #print(before_mean, after_mean)
-    #gain_mean_percent = round((((after_mean-before_mean))/before_mean)*100, 4)
+    print(before_mean, after_mean)
+    gain_mean_percent = round((((after_mean-before_mean))/before_mean)*100, 4)
     #gain_mean_percent = (((after_mean-before_mean))/before_mean)*100
     # print(gain_mean_percent)
 
     for i in range(len(after_list)):
         gain_list.append((round(after_list[i]-before_list[i], 4), i))
 
-    return gain_list  # , gain_mean_percent, gain_mean
+    return gain_list, gain_mean_percent, gain_mean

@@ -1,22 +1,28 @@
 import CR2A.CR2A_aggregate as aggregate
 import CR2A.CR2A_utils as utils
 import CR2A.CR2A_effectiveness as effectiv
-import os, math
+import CR2A.CR2A_plotlib as plotlib
+import os, math, shutil
 from itertools import zip_longest
 
-def call_cascating_aggregagtion(dataset_name: str, top_k: int, top_m: int, list_method_cascade: str, list_method_final: str, outlayer: str, number_combinations=2, mode="b"):
+def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_method_cascade: str, list_method_final: str, outlayer: str, number_combinations=2, mode="b"):
 
-    output_log_path, output_dataset_path, output_rk_fusion_path, output_result, output_top_k_results = utils.paths_validations(
-        dataset_name, top_k, top_m, outlayer, mode, list_method_cascade.upper(), list_method_final.upper())
 
     # rootDir: str -> root path of code
     rootDir = os.getcwd()
 
     dataset_path = f"{rootDir}/dataset/{dataset_name}"
 
+    output_log_path, output_dataset_path, output_rk_fusion_path, output_result, output_top_m_results = utils.paths_validations(
+        dataset_name, top_k, top_m, outlayer, mode, list_method_cascade.upper(), list_method_final.upper())
+
+
+
     print("\nGetting values from precision, recall and MAP...")
 
+
     utils.get_all_eval(dataset_path, output_dataset_path, outlayer)
+
 
     authority, reciprocal = effectiv.get_effectiveness_rk(f"{dataset_path}/ranked_lists", top_k, outlayer)
 
@@ -60,11 +66,11 @@ def call_cascating_aggregagtion(dataset_name: str, top_k: int, top_m: int, list_
 
     print("\nCoping json and txt for top m descriptors...")
 
-    utils.call_copy_topm_files(topm_descriptors, output_rk_fusion_path, output_log_path, output_top_k_results)
+    utils.call_copy_topm_files(topm_descriptors, output_rk_fusion_path, output_log_path, output_top_m_results)
 
     print("\nLast step of cascade aggregation started...")
 
-    aggregate.final_cascade_aggregate(list_method_final.upper(), dataset_path, top_m,output_top_k_results, top_m, output_dataset_path)
+    aggregate.final_cascade_aggregate(list_method_final.upper(), dataset_path, top_m,output_top_m_results, top_m, output_dataset_path)
 
     best_isolated = utils.orderbymap_csv(dataset_name, output_dataset_path)
 
@@ -72,6 +78,27 @@ def call_cascating_aggregagtion(dataset_name: str, top_k: int, top_m: int, list_
 
     print("\nThe cascade process has been complete!")
 
-    print(f"The gain between the best single descriptor and the cascade method was equal to {gain_mean} ({gain_mean_percent}%)")
+    gain_log = f"The gain between the best single descriptor and the cascade method was equal to {gain_mean} ({gain_mean_percent}%)"
+
+    print(gain_log)
+
+    with open(f'{output_dataset_path}/gain_log.txt', 'w') as log_file:
+        log_file.write(gain_log)
+
+
+    utils.jsons_to_CSV(output_log_path ,output_dataset_path, "all_fusions")
+
+    utils.jsons_to_CSV(output_top_m_results, output_dataset_path, "top_m_fusions")
+    
+    shutil.rmtree(output_rk_fusion_path)
+
+    for current_path, subpaths, files in os.walk(output_dataset_path):
+        for file in files:
+            file_way = os.path.join(current_path, file)
+            if file.endswith('.txt') and (os.path.getsize(file_way) > (100 * 1024)):  # 100 KB em bytes:
+                os.remove(file_way)
+                print(f"Arquivo {file_way} removido com sucesso.")
+
+    plotlib.plot_dot_graph(output_dataset_path, dataset_name, top_k)
 
     return

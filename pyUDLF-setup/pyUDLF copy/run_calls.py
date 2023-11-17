@@ -150,7 +150,7 @@ def run_platform(config_file, bin_path):
 def verify_running(path):
     """
     """
-    error_vet = ["invalid", "error", "warning", "can't"]
+    error_vet = ["invalid", "error", "can't"]
     error_flag = False
     with open(path, 'r') as f:
         lines = [x.strip() for x in f.readlines()]

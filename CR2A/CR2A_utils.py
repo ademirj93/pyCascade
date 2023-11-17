@@ -1,6 +1,6 @@
 import CR2A.CR2A_evaluation as evall
 from pyUDLF.utils import readData
-import os, csv, shutil
+import os, csv, shutil, json
 import pandas as pd
 
 
@@ -363,7 +363,7 @@ def get_all_eval(input_path: str,  output_dataset_path: str, outlayer: str, N=5)
 
     aggregate_ranked_lists(dataset_name,  output_dataset_path)
 
-    return
+    return 
 
 
 def call_save_effectiveness(dataset_name: str, authority: dict, reciprocal: dict, top_k: int, output_dataset_path: str, filtering=False, result=[]):
@@ -450,3 +450,48 @@ def computing_gain (dataset_path: str, output_dataset_path: str, best_isolated: 
     return gain_list,gain_mean_percent, gain_mean
 
 
+def jsons_to_CSV(output_log_path: str, output_dataset_path: str, complement: str):
+    
+    # Lista para armazenar os dados a serem salvos no CSV
+    csv_data = []
+
+    # Itera pelos arquivos no diretório
+    for file in os.listdir(output_log_path):
+        if file.endswith('.json'):
+            file_way = os.path.join(output_log_path, file)
+
+            # Abre o arquivo JSON e lê seus dados
+            with open(file_way, 'r') as f:
+                json_data = json.load(f)
+
+            # Obtém o título do arquivo
+            file_title = os.path.splitext(file)[0]
+
+            # Cria um dicionário para armazenar os valores
+            values = {"descriptor": file_title}
+
+            # Adiciona os valores das chaves ao dicionário
+            for key, value in json_data.items():
+                values[key] = value
+
+            # Adiciona os valores a serem salvos no CSV
+            csv_data.append(values)
+
+    # Reorganiza a ordem das colunas para ter "descriptor" como a primeira coluna
+    ordered_columns = ["descriptor"] + [col for col in csv_data[0] if col != "descriptor"]
+
+    # Ordena os dados pela coluna "MAP"
+    ordered_csv_data = sorted(csv_data, key=lambda x: float(x.get('MAP', 0)), reverse=True)
+
+    # Caminho para salvar o arquivo CSV
+    csv_way = f'{output_dataset_path}/fusion_values_{complement}.csv'
+
+    # Salva os dados em um arquivo CSV
+    with open(csv_way, 'w', newline='', encoding='utf-8') as csv_file:
+        escritor_csv = csv.DictWriter(csv_file, fieldnames=ordered_columns)
+        escritor_csv.writeheader()
+        escritor_csv.writerows(ordered_csv_data)
+
+    shutil.rmtree(output_log_path)
+
+    return
