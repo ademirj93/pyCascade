@@ -24,7 +24,10 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
     utils.get_all_eval(dataset_path, output_dataset_path, outlayer)
 
 
-    authority, reciprocal = effectiv.get_effectiveness_rk(f"{dataset_path}/ranked_lists", top_k, outlayer)
+    #authority, reciprocal = effectiv.get_effectiveness_rk(f"{dataset_path}/ranked_lists", top_k, outlayer)
+
+    authority = effectiv.compute_descriptors_effectiveness("authority", top_k, f"{dataset_path}/ranked_lists", outlayer)
+    reciprocal = effectiv.compute_descriptors_effectiveness("reciprocal", top_k, f"{dataset_path}/ranked_lists", outlayer)
 
     print("\nSaving the results of authority and reciprocal...")
 
@@ -48,7 +51,10 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
     aggregate.final_cascade_aggregate(list_method_final.upper(), dataset_path, top_m, output_rk_fusion_path, cascate_size, output_result)
     
-    authority,reciprocal = effectiv.get_effectiveness_rk(output_rk_fusion_path, top_k, outlayer)
+    #authority,reciprocal = effectiv.get_effectiveness_rk(output_rk_fusion_path, top_k, outlayer)
+
+    authority = effectiv.compute_descriptors_effectiveness("authority", top_k, output_rk_fusion_path, outlayer)
+    reciprocal = effectiv.compute_descriptors_effectiveness("reciprocal", top_k, output_rk_fusion_path, outlayer)
 
     cascade_descriptors = os.listdir(output_rk_fusion_path)
 

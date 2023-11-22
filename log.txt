@@ -9,11 +9,13 @@
  Image List File:  /home/ademir/pyCascade/dataset/oxford17flowers/flowers_lists.txt
  Image Class File: /home/ademir/pyCascade/dataset/oxford17flowers/flowers_classes.txt
  Input Files:
-                   (1) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=3b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-VGGNet+rks_swintf_original_flowers_topK=80_topM=3.txt
-                   (2) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=3b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-VGGNet+CNN-InceptionResNet_topK=80_topM=3.txt
-                   (3) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=3b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-InceptionResNet+rks_swintf_original_flowers_topK=80_topM=3.txt
+                   (1) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_rks_swintf_original_flowers+CNN-FBResNet_topK=80_topM=5.txt
+                   (2) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-InceptionResNet+CNN-FBResNet_topK=80_topM=5.txt
+                   (3) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-VGGNet+rks_vit-b16_original_flowers_topK=80_topM=5.txt
+                   (4) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-InceptionResNet+rks_vit-b16_original_flowers_topK=80_topM=5.txt
+                   (5) /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/topm_rk_cascaded_oxford17flowers_topk=80/oxford17flowers_CNN-VGGNet+rks_swintf_original_flowers_topK=80_topM=5.txt
  Input Format:     RK NUM  (automatically detected)
- Output File:      /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=3b/cascaded_oxford17flowers_topM=3
+ Output File:      /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5b/cascaded_oxford17flowers_topM=5
  Output Format:    RK NUM
  --------------------------------------
 
@@ -29,23 +31,23 @@
  - EVALUATION RESULTS -
  --------------------------------------
  * Efficiency:
-	 Total Time of the Algorithm Execution: 1.3004 s
+	 Total Time of the Algorithm Execution: 2.1628 s
 
  * Effectiveness:
-	 P@4		0.9914
-	 P@5		0.9903
-	 P@10		0.9882
-	 P@15		0.9835
-	 P@20		0.9722
-	 P@30		0.9501
-	 P@50		0.8901
-	 P@100		0.6964
-	 Recall@4	0.0496
-	 Recall@5	0.0619
-	 Recall@10	0.1235
-	 Recall@20	0.2431
-	 Recall@40	0.4609
-	 MAP		0.8782
+	 P@4		0.9949
+	 P@5		0.9944
+	 P@10		0.9922
+	 P@15		0.9896
+	 P@20		0.9858
+	 P@30		0.9773
+	 P@50		0.9399
+	 P@100		0.7254
+	 Recall@4	0.0497
+	 Recall@5	0.0622
+	 Recall@10	0.1240
+	 Recall@20	0.2465
+	 Recall@40	0.4816
+	 MAP		0.9168
  --------------------------------------
 
- Log generated at 2023/11/22 17:18:47
+ Log generated at 2023/11/22 20:44:3

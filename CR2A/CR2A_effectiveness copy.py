@@ -7,17 +7,6 @@ def list_descriptors(path):
     return [x[:-4] for x in sorted(os.listdir(path))]
 
 
-def get_effectiveness_func(effectiveness_estimation_measure):
-    if effectiveness_estimation_measure == "authority":
-        return compute_authority_score
-
-    if effectiveness_estimation_measure == "reciprocal":
-        return compute_reciprocal_score
-
-    print("\n ERROR: Unknown effec. estim. measure:",
-          effectiveness_estimation_measure)
-    exit(1)
-
 def read_ranked_lists_file(descriptor: str, path_rks: str, top_k: int):
     file_path = os.path.join(path_rks, descriptor) + ".txt"
     #print("\tReading file", file_path)
@@ -66,33 +55,44 @@ def compute_reciprocal_score(ranked_lists: list, index: int, top_k: int):
     return (score/(top_k**2))
 
 
-def compute_rk_effectiveness(effectiveness_function, ranked_lists:dict, top_k: int):
-    n = int(len(ranked_lists))
-    total = 0
-    for index in range(n):
-        total += effectiveness_function(ranked_lists, index, top_k)
-    return total/n
+def compute_effectiveness_wrapper(
+    descriptors: list, ranked_lists: dict, effectiveness_function, top_k: int
+):
+    result = {}
+
+    for descriptor in descriptors:
+        result[descriptor] = 0
+
+        count = int(len(ranked_lists[descriptor]))
+
+        for index in range(count):
+            result[descriptor] += effectiveness_function(
+                ranked_lists[descriptor], index, top_k
+            )
+
+        result[descriptor] = result[descriptor] / count
+
+    return result
 
 
-def compute_descriptors_effectiveness(effectiveness_function: str, top_k: int, input_path: str, outlayer: str, n_pools = 4):
-    
+def get_effectiveness_rk(input_path: str, top_k: int, outlayer: str):
+
     descriptors = list_descriptors(input_path)
 
     descriptors = utils.set_filter_outlayer(descriptors, outlayer)
 
-
+    print(descriptors)
+    
     ranked_lists = load_ranked_lists(descriptors, input_path, top_k)
 
-    effectiveness_function = get_effectiveness_func(effectiveness_function)
+    print("\nComputing authorithy and reciprocal score...")
 
-    effectiveness = {}
-    print("\n Computing effectiveness estimations...")
-    pool_params = [[effectiveness_function, ranked_lists[descriptor], top_k]
-                   for descriptor in descriptors]
-    with Pool(n_pools) as p:
-        # Some print messages may not be reported while running pool map
-        output_effectiveness = p.starmap(compute_rk_effectiveness, pool_params)
-    for i, descriptor in enumerate(descriptors):
-        effectiveness[descriptor] = output_effectiveness[i]
-    print(" Done!")
-    return effectiveness
+    authority = compute_effectiveness_wrapper(
+        descriptors, ranked_lists, compute_authority_score, top_k)
+
+    reciprocal = compute_effectiveness_wrapper(
+        descriptors, ranked_lists, compute_reciprocal_score, top_k)
+
+    print("Done!")
+
+    return authority, reciprocal
