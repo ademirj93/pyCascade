@@ -80,7 +80,7 @@ def plot_dot_graph(output_dataset_path: str, dataset_name: str, top_k: int):
     plt.savefig(f'{output_dataset_path}/{dataset_name}_graph_{day}{month}{year}.png')
 
     # Mostrando os subplots
-    plt.show()
+    #plt.show()
 
 
     return

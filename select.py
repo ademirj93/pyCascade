@@ -6,7 +6,7 @@ from PIL import Image
 
 current_path = os.getcwd()
 # Caminho para a pasta com as imagens
-caminho_pasta = f"{current_path}/dataset/oxford17flowers/jpg"
+caminho_pasta = f"{current_path}/dataset/corel5k/corel5k_images"
 
 # Listar todos os arquivos na pasta
 arquivos = os.listdir(caminho_pasta)
@@ -26,4 +26,6 @@ for i, imagem in enumerate(selecionadas):
     axs[i].set_title(img_title)  # Definir título para cada imagem
 
 plt.tight_layout()
+
+plt.savefig(f'corel5k.png')
 plt.show()
