@@ -31,34 +31,28 @@ def load_ranked_lists(descriptors: list, path_rks: str, top_k: int):
 
 def compute_authority_score(ranked_lists: list, index: int, top_k: int):
     score = 0
-
-    query = ranked_lists[index]
-
-    for query_rank in query[1:]:
-        comparative = ranked_lists[query_rank]
-
-        score += sum(comparative_rank in query for comparative_rank in comparative)
-
-    return score / (top_k**2)
+    rk1 = ranked_lists[index][:top_k]
+    for img1 in rk1:
+        rk2 = ranked_lists[img1][:top_k]
+        for img2 in rk2:
+            for current_img in rk1:
+                if img2 == current_img:
+                    score += 1
+                    break
+    return (score/(top_k**2))
 
 
 def compute_reciprocal_score(ranked_lists: list, index: int, top_k: int):
-    result_score = 0
-
-    query = ranked_lists[index]
-
-    weights = [(weight + 1) for weight in list(range(top_k))]
-
-    for query_rank in query[1:]:
-        comparative = ranked_lists[query_rank]
-
-        scores = [comparative_rank in query for comparative_rank in comparative]
-
-        result_score += sum(
-            score / weights[index] for index, score in enumerate(scores)
-        )
-
-    return result_score / (top_k**2)
+    score = 0
+    rk1 = ranked_lists[index][:top_k]
+    for img1 in rk1:
+        rk2 = ranked_lists[img1][:top_k]
+        for img2 in rk2:
+            for k, current_img in enumerate(rk1):
+                if img2 == current_img:
+                    score += 1/(k+1)
+                    break
+    return (score/(top_k**2))
 
 
 def compute_effectiveness_wrapper(

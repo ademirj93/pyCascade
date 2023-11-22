@@ -38,8 +38,6 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
     if top_m > 2:
         cascate_size = math.comb(top_m, number_combinations)
-    elif top_m == 2:
-        cascate_size = 1
     else:
         print("The cascading calculation cannot be performed with a top M value of less than 2!")
         exit()
