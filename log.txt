@@ -31,7 +31,7 @@
  - EVALUATION RESULTS -
  --------------------------------------
  * Efficiency:
-	 Total Time of the Algorithm Execution: 2.1628 s
+	 Total Time of the Algorithm Execution: 2.1782 s
 
  * Effectiveness:
 	 P@4		0.9949
@@ -50,4 +50,4 @@
 	 MAP		0.9168
  --------------------------------------
 
- Log generated at 2023/11/22 20:44:3
+ Log generated at 2023/11/22 21:30:3

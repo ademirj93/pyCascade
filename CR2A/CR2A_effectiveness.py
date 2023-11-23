@@ -3,8 +3,13 @@ import CR2A.CR2A_utils as utils
 import os
 
 
+
 def list_descriptors(path):
-    return [x[:-4] for x in sorted(os.listdir(path))]
+    files = [os.path.splitext(file)[0] for file in os.listdir(path) if os.path.isfile(os.path.join(path, file))]
+    return sorted(files)
+
+#def list_descriptors(path):
+#    return [x[:-4] for x in sorted(os.listdir(path))]
 
 
 def get_effectiveness_func(effectiveness_estimation_measure):
