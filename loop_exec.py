@@ -1,7 +1,7 @@
 import CR2A.CR2A_calls as call
 
 datasets = {"oxford17flowers": 80, "corel5k":100}
-methods = ["rlsim", "lhrr", "cprr", "rdpac"]
+methods = ["rdpac"]
 
 # outlayer options "outlayer_file"/"only_nn_descriptors"/"only_classic_descriptors"
 outlayer = "only_nn_descriptors"

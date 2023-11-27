@@ -8,6 +8,12 @@ from itertools import zip_longest
 def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_method_cascade: str, list_method_final: str, outlayer: str, number_combinations=2, mode="b"):
 
 
+    if top_m > 2:
+        cascate_size = math.comb(top_m, number_combinations)
+    else:
+        print("The cascading calculation cannot be performed with a top M value of less than 3!")
+        exit()
+
     # rootDir: str -> root path of code
     rootDir = os.getcwd()
 
@@ -18,7 +24,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
 
 
-    print("\nGetting values from precision, recall and MAP...")
+    '''print("\nGetting values from precision, recall and MAP...")
 
 
     utils.get_all_eval(dataset_path, output_dataset_path, outlayer)
@@ -38,13 +44,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
     aggregate.cascade_aggregate(list_method_cascade.upper(), dataset_path, mode, top_k,
                                 top_m, output_log_path, output_dataset_path, output_rk_fusion_path)
-
-    if top_m > 2:
-        cascate_size = math.comb(top_m, number_combinations)
-    else:
-        print("The cascading calculation cannot be performed with a top M value of less than 2!")
-        exit()
-
+    
     print(f"\nThe size of cascade is equals {cascate_size}")
 
     print("\nSecond step of cascade aggregation started...")
@@ -57,6 +57,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
     reciprocal = effectiv.compute_descriptors_effectiveness("reciprocal", top_k, output_rk_fusion_path, outlayer)
 
     cascade_descriptors = os.listdir(output_rk_fusion_path)
+    cascade_descriptors.sort()
 
     result = [[desc, auth, rec] for desc, auth, rec in zip_longest(cascade_descriptors, authority.values(), reciprocal.values(), fillvalue="NULL")]
 
@@ -67,7 +68,8 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
     print("\nGetting top m descriptors")
 
     topm_descriptors = aggregate.read_list_top_m(dataset_path, output_dataset_path, utils.set_mode_file(mode), top_k, top_m, True)
-
+    topm_descriptors.sort()
+    
     print("\nCoping json and txt for top m descriptors...")
 
     utils.call_copy_topm_files(topm_descriptors, output_rk_fusion_path, output_log_path, output_top_m_results)
@@ -101,8 +103,8 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
             file_way = os.path.join(current_path, file)
             if file.endswith('.txt') and (os.path.getsize(file_way) > (100 * 1024)):  # 100 KB em bytes:
                 os.remove(file_way)
-                print(f"Arquivo {file_way} removido com sucesso.")
+                print(f"Arquivo {file_way} removido com sucesso.")'''
 
-    plotlib.plot_dot_graph(output_dataset_path, dataset_name, top_k)
+    plotlib.plot_dot_graph(output_dataset_path, dataset_name, top_k, top_m)
 
     return

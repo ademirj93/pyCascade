@@ -327,6 +327,8 @@ def get_all_eval(input_path: str,  output_dataset_path: str, outlayer: str, N=5)
 
     files = set_filter_outlayer(os.listdir(input_path), outlayer)
 
+    files.sort()
+
     header = ["descriptor", "precision", "recall", "MAP"]
 
     with open(output_file_path + ".csv", "w", newline="") as csv_file:
