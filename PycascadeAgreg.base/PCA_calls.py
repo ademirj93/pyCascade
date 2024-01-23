@@ -1,7 +1,8 @@
-import CR2A.CR2A_aggregate as aggregate
-import CR2A.CR2A_utils as utils
-import CR2A.CR2A_effectiveness as effectiv
-import CR2A.CR2A_plotlib as plotlib
+import PCA_aggregate as aggregate
+import PCA_utils as utils
+import PCA_effectiveness as effectiv
+import PCA_plot as plotlib
+import PCA_writefiles as writefile
 import os, math, shutil
 from itertools import zip_longest
 
@@ -24,7 +25,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
 
 
-    '''print("\nGetting values from precision, recall and MAP...")
+    print("\nGetting values from precision, recall and MAP...")
 
 
     utils.get_all_eval(dataset_path, output_dataset_path, outlayer)
@@ -37,7 +38,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
     print("\nSaving the results of authority and reciprocal...")
 
-    utils.call_save_effectiveness(
+    writefile.call_save_effectiveness(
         dataset_name, authority, reciprocal, top_k, output_dataset_path)
 
     print("\nFirst step of cascade aggregation started...")
@@ -61,7 +62,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
 
     result = [[desc, auth, rec] for desc, auth, rec in zip_longest(cascade_descriptors, authority.values(), reciprocal.values(), fillvalue="NULL")]
 
-    utils.call_save_effectiveness(dataset_name,authority, reciprocal, top_k,output_dataset_path, True, result)
+    writefile.call_save_effectiveness(dataset_name,authority, reciprocal, top_k,output_dataset_path, True, result)
 
     print("\nSaving the results of authority and reciprocal...")
 
@@ -103,7 +104,7 @@ def call_cascating_aggregagtion(dataset_name: str,top_k: int, top_m: int, list_m
             file_way = os.path.join(current_path, file)
             if file.endswith('.txt') and (os.path.getsize(file_way) > (100 * 1024)):  # 100 KB em bytes:
                 os.remove(file_way)
-                print(f"Arquivo {file_way} removido com sucesso.")'''
+                print(f"Arquivo {file_way} removido com sucesso.")
 
     plotlib.plot_dot_graph(output_dataset_path, dataset_name, top_k, top_m)
 

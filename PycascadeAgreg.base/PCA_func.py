@@ -1,4 +1,4 @@
-from CR2A.CR2A_effectiveness import *
+from PCA_effectiveness import *
 from pyUDLF.utils import evaluation
 
 
