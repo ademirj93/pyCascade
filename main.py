@@ -2,7 +2,7 @@ import CR2A.CR2A_calls as call
 
 dataset_name = "oxford17flowers"
 top_k = 80
-top_m = 10
+top_m = 20
 
 
 #NONE|CPRR|RLRECOM|RLSIM|CONTEXTRR|RECKNNGRAPH|RKGRAPH|CORGRAPH|LHRR|BFSTREE|RDPAC|RFE
