@@ -3,7 +3,7 @@ import PyCascadeAggreg.pca_calls as pca_calls
 
 dataset_name = "oxford17flowers"
 top_k = 80
-top_m = 3
+top_m = 5
 
 
 #NONE|CPRR|RLRECOM|RLSIM|CONTEXTRR|RECKNNGRAPH|RKGRAPH|CORGRAPH|LHRR|BFSTREE|RDPAC|RFE
