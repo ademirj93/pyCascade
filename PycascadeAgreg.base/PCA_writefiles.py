@@ -28,7 +28,6 @@ def save_effectiveness_scores(dataset_name: str, authority_score: dict, reciproc
 
     return
 
-
 def save_effectiveness_result(dataset_name: str, output_dataset_path: str, results: list):
 
     header = ["descriptor", "authority", "reciprocal"]
@@ -59,6 +58,7 @@ def call_save_effectiveness(dataset_name: str, authority: dict, reciprocal: dict
         utils.aggregate_ranked_lists_effectiveness(
             dataset_name, top_k, output_dataset_path)
     elif filtering:
+        
 
         save_effectiveness_result(dataset_name, output_dataset_path, result)
 
