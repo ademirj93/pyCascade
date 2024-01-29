@@ -31,9 +31,12 @@ def validate_data(top_m: int, number_combinations: int, evall_mode: str):
 # Função responsável por criar as pastas necessárias
 def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mode: str, agg_method_layer_one: str,agg_method_layer_two: str):
 
+    if mode == "borda score":
+        mode="borda_score"
+
     rootDir = os.getcwd()
     output_path = f"{rootDir}/output"
-    output_dataset_path = f"{output_path}/output_{dataset_name}_layerone-{agg_method_layer_one}_layertwo-{agg_method_layer_two}_{outlayer}_topk={top_k}_topm={top_m}{mode}"
+    output_dataset_path = f"{output_path}/output_{dataset_name}_layerone-{agg_method_layer_one}_layertwo-{agg_method_layer_two}_{outlayer}_topk{top_k}_topm{top_m}_{mode}"
     output_rk_fusion_path = f"{output_dataset_path}/rk_fusions_{dataset_name}"
     output_final_result = f"{output_dataset_path}/rk_cascaded_{dataset_name}_topk={top_k}"
 
@@ -195,7 +198,7 @@ def get_borda_ranked_lists(dataset_name: str, output_dataset_path: str):
     #print (df_score)
     borda_score = df_score['borda score']
 
-    savefiles.save_borda_score(file, borda_score, output_dataset_path)
+    savefiles.save_borda_score(file, borda_score)
 
     file = file.split("/")[-1]
     print(f"Arquivo {file} Atualizado com sucesso!")

@@ -68,7 +68,7 @@ def save_effectiveness_scores(file_name: str, authority_score: dict, reciprocal_
 
     return
 
-def save_borda_score(file_name: str, borda_score: list, output_dataset_path: str):
+def save_borda_score(file_name: str, borda_score: list):
 
     
     file = f"{file_name}.csv"
@@ -103,4 +103,38 @@ def save_borda_score(file_name: str, borda_score: list, output_dataset_path: str
         escritor_csv.writeheader()
         escritor_csv.writerows(lines)
     
+    
+    
+def save_layer_one_aggreg(output_dataset_path: str, dataset_name: str, field_keys: list, return_values: list):
+
+
+    output_file_path = f"{output_dataset_path}/{dataset_name}_cascade.csv"
+    with open(output_file_path, "w") as file:        
+        csv_writer = csv.DictWriter(file, fieldnames= field_keys)
+        csv_writer.writeheader()
+        
+
+    for value in return_values:
+        
+        with open(output_file_path, "a") as file:
+                
+            csv_writer = csv.DictWriter(file, fieldnames= field_keys)
+            csv_writer.writerow(value)
+
+
+    try:
+        data_frame = pd.read_csv(output_file_path)
+        
+        # Ordena o DataFrame pelo valor da coluna "descriptor"
+        data_frame_sorted = data_frame.sort_values(by="descriptor", ascending=True)
+
+        # Salva o DataFrame ordenado de volta no arquivo CSV original
+        data_frame_sorted.to_csv(output_file_path, index=False)  # Não inclui o índice no arquivo CSV
+
+    except:
+        # If file couldn't be oppened return a message
+        file = output_file_path.split("/")[-1]
+        print(f"{file} não localizado!")
+        exit()
+
     return

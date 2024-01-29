@@ -1,0 +1,54 @@
+ # UNSUPERVISED DISTANCE LEARNING METHODS FRAMEWORK #
+
+
+ - GENERAL INFORMATION -
+ --------------------------------------
+ Task:             FUSION
+ Method:           RDPAC
+ Dataset Size:     1360
+ Image List File:  /home/ademir/pyCascade/dataset/oxford17flowers/flowers_lists.txt
+ Image Class File: /home/ademir/pyCascade/dataset/oxford17flowers/flowers_classes.txt
+ Input Files:
+                   (1) /home/ademir/pyCascade/dataset/oxford17flowers/ranked_lists/rks_swintf_original_flowers.txt
+                   (2) /home/ademir/pyCascade/dataset/oxford17flowers/ranked_lists/rks_vit-b16_original_flowers.txt
+ Input Format:     RK NUM  (automatically detected)
+ Output File:      output
+ Output Format:    RK NUM
+ --------------------------------------
+
+
+ - METHOD PARAMETERS -
+ --------------------------------------
+ PARAM_RDPAC_K_END = 15
+ PARAM_RDPAC_K_INC = 1
+ PARAM_RDPAC_K_START = 1
+ PARAM_RDPAC_L = 400
+ PARAM_RDPAC_L_MULT = 2
+ PARAM_RDPAC_P = 0.75
+ PARAM_RDPAC_PL = 0.97
+ --------------------------------------
+
+
+ - EVALUATION RESULTS -
+ --------------------------------------
+ * Efficiency:
+	 Total Time of the Algorithm Execution: 2.7308 s
+
+ * Effectiveness:
+	 P@4		0.9884
+	 P@5		0.9888
+	 P@10		0.9889
+	 P@15		0.9898
+	 P@20		0.9903
+	 P@30		0.9909
+	 P@50		0.9915
+	 P@100		0.7667
+	 Recall@4	0.0494
+	 Recall@5	0.0618
+	 Recall@10	0.1236
+	 Recall@20	0.2476
+	 Recall@40	0.4957
+	 MAP		0.9543
+ --------------------------------------
+
+ Log generated at 2024/1/29 17:48:56

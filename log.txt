@@ -9,10 +9,10 @@
  Image List File:  /home/ademir/pyCascade/dataset/oxford17flowers/flowers_lists.txt
  Image Class File: /home/ademir/pyCascade/dataset/oxford17flowers/flowers_classes.txt
  Input Files:
-                   (1) /home/ademir/pyCascade/dataset/oxford17flowers/ranked_lists/CNN-FBResNet.txt
-                   (2) /home/ademir/pyCascade/dataset/oxford17flowers/ranked_lists/CNN-ResNet.txt
+                   (1) /home/ademir/pyCascade/dataset/oxford17flowers/ranked_lists/rks_swintf_original_flowers.txt
+                   (2) /home/ademir/pyCascade/dataset/oxford17flowers/ranked_lists/rks_vit-b16_original_flowers.txt
  Input Format:     RK NUM  (automatically detected)
- Output File:      /home/ademir/pyCascade/output/output_oxford17flowers_layerone-RDPAC_layertwo-CPRR_only_nn_descriptors_topk=80_topm=5bordascore/rk_fusions_oxford17flowers/oxford17flowers_CNN-FBResNet_+_CNN-ResNet
+ Output File:      analise_oxford17flowers
  Output Format:    RK NUM
  --------------------------------------
 
@@ -32,23 +32,23 @@
  - EVALUATION RESULTS -
  --------------------------------------
  * Efficiency:
-	 Total Time of the Algorithm Execution: 11.9917 s
+	 Total Time of the Algorithm Execution: 6.4723 s
 
  * Effectiveness:
-	 P@4		0.9219
-	 P@5		0.9140
-	 P@10		0.8896
-	 P@15		0.8760
-	 P@20		0.8666
-	 P@30		0.8513
-	 P@50		0.8227
-	 P@100		0.6531
-	 Recall@4	0.0461
-	 Recall@5	0.0571
-	 Recall@10	0.1112
-	 Recall@20	0.2166
-	 Recall@40	0.4190
-	 MAP		0.8049
+	 P@4		0.9974
+	 P@5		0.9971
+	 P@10		0.9963
+	 P@15		0.9955
+	 P@20		0.9947
+	 P@30		0.9950
+	 P@50		0.9946
+	 P@100		0.7980
+	 Recall@4	0.0499
+	 Recall@5	0.0623
+	 Recall@10	0.1245
+	 Recall@20	0.2487
+	 Recall@40	0.4974
+	 MAP		0.9950
  --------------------------------------
 
- Log generated at 2024/1/27 19:34:24
+ Log generated at 2024/1/29 17:16:20

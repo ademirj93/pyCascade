@@ -36,4 +36,6 @@ def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_o
 
     aggregate.first_layer_fusion(agg_method_layer_one, dataset_path, evall_mode, top_m, output_dataset_path, output_rk_fusion_path)
 
+    #authority, reciprocal = effectiv.call_compute_descriptors_effectiveness(top_k, f"{dataset_path}/ranked_lists", outlayer)
+
     return
