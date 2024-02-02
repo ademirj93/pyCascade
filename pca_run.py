@@ -1,8 +1,8 @@
 import PyCascadeAggreg.pca_calls as pca_calls
 
 
-dataset_name = "oxford17flowers"
-top_k = 80
+dataset_name = "corel5k"
+top_k = 100
 top_m = 5
 
 

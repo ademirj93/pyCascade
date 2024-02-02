@@ -58,6 +58,9 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
     input_data.set_classes_file(classes_file_path)
     input_data.set_lists_file(lists_file_path)
 #    input_data.write_config(f"{output_dataset_path}/config_{dataset_name}.ini")
+    if list_method.upper() == "RDPAC":
+        rdpac_l = int(dataset_size//2)
+        input_data.set_param("PARAM_RDPAC_L", rdpac_l)
 
     descriptors = read_list_top_m(dataset_path, output_dataset_path, evall_mode, top_m)
 
@@ -81,7 +84,7 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
 
             input_data.set_input_files([file_layer_one, file_layer_two])
 
-            path_out = f"{output_rk_fusion_path}/{dataset_name}_{file_one}+{file_two}"
+            path_out = f"{output_rk_fusion_path}/{file_one}+{file_two}"
             input_data.set_output_file_path(path_out)
 
             input_data.write_config(f"{output_dataset_path}/config_{dataset_name}.ini")
@@ -89,15 +92,15 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
             output = udlf.run(input_data, get_output=True)
 
 
-            print(path_out)
-            print(output.get_rks())
+            #print(path_out)
+            #print(output.get_rks())
             # Getting the log values from the output
             return_values = output.get_log()
             
             fusion_key = "descriptor"
-            fusion_desc = f"{file_one} + {file_two}"
+            fusion_desc = f"{file_one}+{file_two}"
 
-            output.print_log()
+            #output.print_log()
 
             order_dict = OrderedDict(return_values)
             order_dict = OrderedDict([(fusion_key, fusion_desc)] + list(order_dict.items()))

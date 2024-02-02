@@ -168,13 +168,13 @@ def get_borda_ranked_lists(dataset_name: str, output_dataset_path: str):
     authority_sort = data_frame.sort_values(by="authority", ascending=False)
     authority_sort = authority_sort.reset_index(drop=True)
 
-    precision_sort = data_frame.sort_values(by="precision", ascending=False)
-    precision_sort = precision_sort.reset_index(drop=True)
+    reciprocal_sort = data_frame.sort_values(by="reciprocal", ascending=False)
+    reciprocal_sort = reciprocal_sort.reset_index(drop=True)
 
     # Crie uma estrutura de dados para armazenar a contagem de votos (pontuações) para cada elemento
     score = {}
 
-    concat_data_frame = pd.concat([authority_sort, precision_sort])
+    concat_data_frame = pd.concat([authority_sort, reciprocal_sort])
 
     # Calcule a pontuação de Borda Count para cada elemento
     for index, row in concat_data_frame.iterrows():
