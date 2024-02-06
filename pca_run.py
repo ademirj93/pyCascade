@@ -3,7 +3,7 @@ import PyCascadeAggreg.pca_calls as pca_calls
 
 dataset_name = "corel5k"
 top_k = 100
-top_m = 5
+top_m = 7
 
 
 #NONE|CPRR|RLRECOM|RLSIM|CONTEXTRR|RECKNNGRAPH|RKGRAPH|CORGRAPH|LHRR|BFSTREE|RDPAC|RFE

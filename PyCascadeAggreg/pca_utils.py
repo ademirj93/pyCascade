@@ -38,7 +38,7 @@ def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mo
     output_path = f"{rootDir}/output"
     output_dataset_path = f"{output_path}/output_{dataset_name}_layerone-{agg_method_layer_one}_layertwo-{agg_method_layer_two}_{outlayer}_topk{top_k}_topm{top_m}_{mode}"
     output_rk_fusion_path = f"{output_dataset_path}/rk_fusions_{dataset_name}"
-    output_final_result = f"{output_dataset_path}/rk_cascaded_{dataset_name}_topk={top_k}"
+    output_rankedlists = f"{rootDir}/dataset/{dataset_name}/ranked_lists/"
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
@@ -52,11 +52,11 @@ def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mo
     if not os.path.exists(output_rk_fusion_path):
         os.makedirs(output_rk_fusion_path)
 
-    if not os.path.exists(output_final_result):
-        os.mkdir(output_final_result)
+    if not os.path.exists(output_rankedlists):
+        os.makedirs(output_rankedlists)
 
 
-    return output_dataset_path, output_rk_fusion_path, output_final_result
+    return output_dataset_path, output_rk_fusion_path, output_rankedlists
 
 # Função responsável por obter e armazenar o endereço dos arquivos de listas e classes
 def get_lists_and_classes_txt(input_path: str):
@@ -139,12 +139,12 @@ def set_filter_outlayer(file_list: list, option: str):
         case "only_nn_descriptors":
             
             print("\nFiltrando ranqueadores CNN e Transformers!")
-            descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element]
+            descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element or "cnn-" in element or "swintf" in element or "VIT-B16" in element]
         
         case "only_classic_descriptors":
 
             print("\nFiltrando ranqueadores clássicos!")
-            descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element]
+            descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element and "cnn-" not in element and "swintf" not in element and "VIT-B16" not in element]
 
         case _:
             print("\nOpção de filtragem desconhecida!")

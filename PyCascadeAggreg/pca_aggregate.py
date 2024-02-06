@@ -53,6 +53,7 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
     input_data.set_method_name(list_method.upper())
     input_data.set_ranked_lists_size(dataset_size)
     input_data.set_dataset_size(dataset_size)
+    input_data.set_param("INPUT_FILE_FORMAT", "RK")
     input_data.set_output_rk_format("NUM")
     input_data.set_output_file_format("RK")
     input_data.set_classes_file(classes_file_path)
@@ -113,7 +114,63 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
 
 
     print("Finalizado com sucesso!")
+
     return
 
 
+def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, cascade_size:int, output_dataset_path: str, output_rk_fusion_path: str):
+    
+    print("\nIniciado o processo de agregação da segunda camada...")
 
+    input_data = inputType.InputType()
+    rootDir = os.getcwd()
+
+    udlf.setBinaryPath(f"{rootDir}/UDLF/bin/udlf")
+    udlf.setConfigPath(f"{rootDir}/UDLF/bin/config.ini")
+
+    dataset_name = dataset_path.split("/")[-1]
+
+    lists_file_path, classes_file_path = utils.get_lists_and_classes_txt(
+        dataset_path)
+
+    dataset_size = utils.get_dataset_size(classes_file_path)
+
+    ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path) if file.endswith(".txt")]
+
+    percent = 0.5
+    top_m = int(len(os.listdir(output_rk_fusion_path)) * percent)
+    
+    descriptors = read_list_top_m(dataset_path, output_dataset_path, evall_mode, top_m)
+
+    
+    ranked_lists = [f"{output_rk_fusion_path}/{rk}" for rk in ranked_lists_files if rk in descriptors]
+
+  #  for rk in ranked_lists_files if rk in descriptors:
+#        ranked_lists.append(f"{output_rk_fusion_path}/{rk}")
+
+
+
+    input_data.set_task("FUSION")
+    input_data.set_method_name(list_method.upper())
+    input_data.set_ranked_lists_size(dataset_size)
+    input_data.set_dataset_size(dataset_size)
+    input_data.set_param("INPUT_FILE_FORMAT", "RK")
+    input_data.set_output_rk_format("NUM")
+    input_data.set_output_file_format("RK")
+    input_data.set_classes_file(classes_file_path)
+    input_data.set_lists_file(lists_file_path)
+    input_data.set_param("NUM_INPUT_FUSION_FILES", cascade_size)
+    input_data.set_output_file_path(f"{output_dataset_path}/cascaded_{dataset_name}")
+    input_data.set_input_files(ranked_lists)
+    input_data.write_config(f"{output_dataset_path}/finalconfig_{dataset_name}.ini")
+    input_data.set_param("OUTPUT_LOG_FILE_PATH",f"{output_dataset_path}/result_cascade.txt")
+    if list_method.upper() == "RDPAC":
+        rdpac_l = int(dataset_size//2)
+        input_data.set_param("PARAM_RDPAC_L", rdpac_l)
+    descriptors = read_list_top_m(f"{dataset_path}_cascade", output_dataset_path, evall_mode, top_m)
+
+    output = udlf.run(input_data, get_output=True)
+
+    print("Finalizado com sucesso!")
+    
+    return

@@ -4,6 +4,7 @@ import PyCascadeAggreg.pca_utils as utils
 import PyCascadeAggreg.pca_effectiveness as effectiv
 import PyCascadeAggreg.pca_savefiles as savefile
 import PyCascadeAggreg.pca_aggregate as aggregate
+import PyCascadeAggreg.pca_rk_compute as rkc
 
 def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_one: str, agg_method_layer_two: str, outlayer: str, number_combinations: int, evall_mode: str):
     
@@ -19,9 +20,13 @@ def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_o
     dataset_path = f"{rootDir}/dataset/{dataset_name}"
 
     # Cria as pastas caso necessário e armazena os caminhos nas varíaveis 
-    output_dataset_path, output_rk_fusion_path, output_result = utils.paths_creations(
+    output_dataset_path, output_rk_fusion_path, output_rankedlists = utils.paths_creations(
         dataset_name, top_k, top_m, outlayer, evall_mode, agg_method_layer_one.upper(), agg_method_layer_two.upper())
     
+    if len(os.listdir(output_rankedlists)) != len(os.listdir(f"{rootDir}/dataset/{dataset_name}/features")):
+        print("Calculando listas ranqueadas dos descritores isolados")
+        rkc.compute_rklists_from_feat(dataset_name)
+
     print("\nCalculando valores do MAP, Precision e Recall...")
 
     utils.get_all_eval(dataset_path, output_dataset_path, outlayer)
@@ -44,4 +49,5 @@ def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_o
 
     utils.get_borda_ranked_lists(f"{dataset_name}_cascade", output_dataset_path)
 
+    aggregate.second_layer_fusion(agg_method_layer_two, dataset_path, evall_mode, cascade_size, output_dataset_path, output_rk_fusion_path)
     return
