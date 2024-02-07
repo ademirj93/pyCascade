@@ -1,4 +1,4 @@
-import CR2A.CR2A_calls as call
+import PyCascadeAggreg.pca_calls as call
 
 datasets = {"oxford17flowers": 80, "corel5k":100}
 methods = ["rdpac"]

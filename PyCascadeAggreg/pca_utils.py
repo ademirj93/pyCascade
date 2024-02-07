@@ -139,12 +139,12 @@ def set_filter_outlayer(file_list: list, option: str):
         case "only_nn_descriptors":
             
             print("\nFiltrando ranqueadores CNN e Transformers!")
-            descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element or "cnn-" in element or "swintf" in element or "VIT-B16" in element]
+            descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element or "cnn-" in element or "swintf" in element or "VIT-" in element or "vit-" in element]
         
         case "only_classic_descriptors":
 
             print("\nFiltrando ranqueadores clássicos!")
-            descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element and "cnn-" not in element and "swintf" not in element and "VIT-B16" not in element]
+            descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element and "cnn-" not in element and "swintf" not in element and "VIT-" not in element and "vit-" not in element]
 
         case _:
             print("\nOpção de filtragem desconhecida!")

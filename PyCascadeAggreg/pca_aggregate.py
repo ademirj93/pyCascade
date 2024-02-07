@@ -135,20 +135,18 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ca
 
     dataset_size = utils.get_dataset_size(classes_file_path)
 
-    ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path) if file.endswith(".txt")]
+    ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path)]
 
     percent = 0.5
     top_m = int(len(os.listdir(output_rk_fusion_path)) * percent)
     
-    descriptors = read_list_top_m(dataset_path, output_dataset_path, evall_mode, top_m)
-
+    descriptors = read_list_top_m(f"{dataset_path}_cascade", output_dataset_path, evall_mode, top_m)
     
-    ranked_lists = [f"{output_rk_fusion_path}/{rk}" for rk in ranked_lists_files if rk in descriptors]
-
-  #  for rk in ranked_lists_files if rk in descriptors:
-#        ranked_lists.append(f"{output_rk_fusion_path}/{rk}")
-
-
+    ranked_lists = []
+    for rk in ranked_lists_files:
+        rk_noex = rk.split(".txt")[0]
+        if rk_noex in descriptors:
+            ranked_lists.append(f"{output_rk_fusion_path}/{rk}")
 
     input_data.set_task("FUSION")
     input_data.set_method_name(list_method.upper())
@@ -159,7 +157,7 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ca
     input_data.set_output_file_format("RK")
     input_data.set_classes_file(classes_file_path)
     input_data.set_lists_file(lists_file_path)
-    input_data.set_param("NUM_INPUT_FUSION_FILES", cascade_size)
+    input_data.set_param("NUM_INPUT_FUSION_FILES", top_m)
     input_data.set_output_file_path(f"{output_dataset_path}/cascaded_{dataset_name}")
     input_data.set_input_files(ranked_lists)
     input_data.write_config(f"{output_dataset_path}/finalconfig_{dataset_name}.ini")
@@ -167,7 +165,6 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ca
     if list_method.upper() == "RDPAC":
         rdpac_l = int(dataset_size//2)
         input_data.set_param("PARAM_RDPAC_L", rdpac_l)
-    descriptors = read_list_top_m(f"{dataset_path}_cascade", output_dataset_path, evall_mode, top_m)
 
     output = udlf.run(input_data, get_output=True)
 
