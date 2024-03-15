@@ -4,7 +4,7 @@ from pyUDLF import run_calls as udlf
 from pyUDLF.utils import inputType
 import pandas as pd
 from collections import OrderedDict
-import os, json, csv
+import os, math
 
 
 def read_list_top_m(dataset_path: str, output_dataset_path: str, effectiveness_score: str, top_m: int):
@@ -13,7 +13,7 @@ def read_list_top_m(dataset_path: str, output_dataset_path: str, effectiveness_s
 
     file = f"{output_dataset_path}/{dataset_name}.csv"
     
-    data_frame = pd.DataFrame(pd.read_csv(file))
+    data_frame = pd.DataFrame(pd.read_csv(file, delimiter=";"))
 
     descriptors = []
 
@@ -32,7 +32,7 @@ def read_list_top_m(dataset_path: str, output_dataset_path: str, effectiveness_s
 
     return descriptors
 
-def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top_m: int, output_dataset_path: str, output_rk_fusion_path: str):
+def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top_m: int, output_dataset_path: str, output_rk_fusion_path: str, lists_file_path: str, classes_file_path: str, l_size: int):
     
     print("\nIniciado o processo de agregação da primeira camada...")
 
@@ -44,9 +44,6 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
 
     dataset_name = dataset_path.split("/")[-1]
 
-    lists_file_path, classes_file_path = utils.get_lists_and_classes_txt(
-        dataset_path)
-
     dataset_size = utils.get_dataset_size(classes_file_path)
 
     input_data.set_task("FUSION")
@@ -56,11 +53,12 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
     input_data.set_param("INPUT_FILE_FORMAT", "RK")
     input_data.set_output_rk_format("NUM")
     input_data.set_output_file_format("RK")
+    input_data.set_ranked_lists_size(l_size)
     input_data.set_classes_file(classes_file_path)
     input_data.set_lists_file(lists_file_path)
 #    input_data.write_config(f"{output_dataset_path}/config_{dataset_name}.ini")
     if list_method.upper() == "RDPAC":
-        rdpac_l = int(dataset_size//2)
+        rdpac_l = int(l_size//2)
         input_data.set_param("PARAM_RDPAC_L", rdpac_l)
 
     descriptors = read_list_top_m(dataset_path, output_dataset_path, evall_mode, top_m)
@@ -118,7 +116,7 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
     return
 
 
-def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, cascade_size:int, output_dataset_path: str, output_rk_fusion_path: str):
+def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, output_dataset_path: str, output_rk_fusion_path: str, alpha: float, lists_file_path: str, classes_file_path: str, fisrt_layer_method: str, l_size: int):
     
     print("\nIniciado o processo de agregação da segunda camada...")
 
@@ -130,15 +128,11 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ca
 
     dataset_name = dataset_path.split("/")[-1]
 
-    lists_file_path, classes_file_path = utils.get_lists_and_classes_txt(
-        dataset_path)
-
     dataset_size = utils.get_dataset_size(classes_file_path)
 
     ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path)]
 
-    percent = 0.5
-    top_m = int(len(os.listdir(output_rk_fusion_path)) * percent)
+    top_m = int(math.ceil(len(os.listdir(output_rk_fusion_path)) * alpha))
     
     descriptors = read_list_top_m(f"{dataset_path}_cascade", output_dataset_path, evall_mode, top_m)
     
@@ -150,7 +144,7 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ca
 
     input_data.set_task("FUSION")
     input_data.set_method_name(list_method.upper())
-    input_data.set_ranked_lists_size(dataset_size)
+    input_data.set_ranked_lists_size(l_size)
     input_data.set_dataset_size(dataset_size)
     input_data.set_param("INPUT_FILE_FORMAT", "RK")
     input_data.set_output_rk_format("NUM")
@@ -162,12 +156,22 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ca
     input_data.set_input_files(ranked_lists)
     input_data.write_config(f"{output_dataset_path}/finalconfig_{dataset_name}.ini")
     input_data.set_param("OUTPUT_LOG_FILE_PATH",f"{output_dataset_path}/result_cascade.txt")
-    if list_method.upper() == "RDPAC":
-        rdpac_l = int(dataset_size//2)
+    
+    if list_method.upper() == "RDPAC" and fisrt_layer_method.upper() == "RDPAC": 
+        rdpac_l = int(l_size//4)
         input_data.set_param("PARAM_RDPAC_L", rdpac_l)
-
+    elif list_method.upper() == "RDPAC" and fisrt_layer_method.upper() != "RDPAC": 
+        rdpac_l = int(l_size//2)
+        input_data.set_param("PARAM_RDPAC_L", rdpac_l)
+    elif list_method.upper() == "CPRR" and fisrt_layer_method.upper() == "RDPAC": 
+        cprr_l = int(l_size//2)
+        input_data.set_param("PARAM_CPRR_L", cprr_l)
+         
     output = udlf.run(input_data, get_output=True)
+    return_values = output.get_log()
+
+    MAP_value = return_values["MAP"]
 
     print("Finalizado com sucesso!")
     
-    return
+    return MAP_value

@@ -1,0 +1,54 @@
+ # UNSUPERVISED DISTANCE LEARNING METHODS FRAMEWORK #
+
+
+ - GENERAL INFORMATION -
+ --------------------------------------
+ Task:             FUSION
+ Method:           RDPAC
+ Dataset Size:     5000
+ Image List File:  /home/ademir/pyCascade/dataset/corel5k/corel5k_lists.txt
+ Image Class File: /home/ademir/pyCascade/dataset/corel5k/corel5k_classes.txt
+ Input Files:
+                   (1) /home/ademir/pyCascade/dataset/corel5k/ranked_lists/swintf.txt
+                   (2) /home/ademir/pyCascade/dataset/corel5k/ranked_lists/cnn-fbresnet152.txt
+ Input Format:     RK NUM  (automatically detected)
+ Output File:      /home/ademir/pyCascade/output/30168c77-5ca8-4bfc-8404-3a066486c010/rk_fusions_corel5k/swintf+cnn-fbresnet152
+ Output Format:    RK NUM
+ --------------------------------------
+
+
+ - METHOD PARAMETERS -
+ --------------------------------------
+ PARAM_RDPAC_K_END = 15
+ PARAM_RDPAC_K_INC = 1
+ PARAM_RDPAC_K_START = 1
+ PARAM_RDPAC_L = 2500
+ PARAM_RDPAC_L_MULT = 2
+ PARAM_RDPAC_P = 0.60
+ PARAM_RDPAC_PL = 0.99
+ --------------------------------------
+
+
+ - EVALUATION RESULTS -
+ --------------------------------------
+ * Efficiency:
+	 Total Time of the Algorithm Execution: 2527.5635 s
+
+ * Effectiveness:
+	 P@4		0.9850
+	 P@5		0.9832
+	 P@10		0.9767
+	 P@15		0.9732
+	 P@20		0.9705
+	 P@30		0.9665
+	 P@50		0.9547
+	 P@100		0.9032
+	 Recall@4	0.0394
+	 Recall@5	0.0492
+	 Recall@10	0.0977
+	 Recall@20	0.1941
+	 Recall@40	0.3844
+	 MAP		0.9353
+ --------------------------------------
+
+ Log generated at 2024/3/15 2:3:18

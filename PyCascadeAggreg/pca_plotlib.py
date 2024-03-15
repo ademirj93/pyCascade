@@ -5,13 +5,13 @@ def plot_dot_graph(output_dataset_path: str, dataset_name: str, top_k: int, top_
 
     try:
         # Carrega os dados do CSV de descritores isolados
-        descriptors_dataset = pd.read_csv(f"{output_dataset_path}/{dataset_name}.csv")
+        descriptors_dataset = pd.read_csv(f"{output_dataset_path}/{dataset_name}.csv", delimiter=";")
     except:
         print(f"Não foi possível localizar o arquivo {dataset_name}.csv")
     
     try:
         # Carrega os dados do CSV de descritores isolados
-        fusion_values = pd.read_csv(f"{output_dataset_path}/{dataset_name}_cascade.csv")
+        fusion_values = pd.read_csv(f"{output_dataset_path}/{dataset_name}_cascade.csv", delimiter=";")
     except:
         print(f"Não foi possível localizar o arquivo {dataset_name}_cascade.csv")
     
@@ -129,6 +129,10 @@ def plot_dot_graph(output_dataset_path: str, dataset_name: str, top_k: int, top_
     # Ajustando o layout para evitar sobreposição
     plt.tight_layout()
     plotname = output_dataset_path.split("/")[-1]
+
+    # Modificar o tamanho da figura (largura, altura) em polegadas
+    plt.gcf().set_size_inches(35, 15)
+
     # Depois de criar o gráfico, use savefig para salvar como imagem
     plt.savefig(f'{output_dataset_path}/{plotname}.png')
 

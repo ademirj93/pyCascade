@@ -1,7 +1,5 @@
-from pyUDLF.utils import readData
-import os, csv, shutil, json, math
+import os, csv, math, uuid
 import pandas as pd
-import PyCascadeAggreg.pca_evaluation as evall
 import PyCascadeAggreg.pca_savefiles as savefiles
 
 # Função que valida o valor minimo do top m e o valor setado para a estimativa de eficácia
@@ -29,25 +27,33 @@ def validate_data(top_m: int, number_combinations: int, evall_mode: str):
     return cascade_size, evall_mode
 
 # Função responsável por criar as pastas necessárias
-def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mode: str, agg_method_layer_one: str,agg_method_layer_two: str):
+def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mode: str, agg_method_layer_one: str, agg_method_layer_two: str, l_size: int):
 
     if mode == "borda score":
-        mode="borda_score"
+        mode= "borda_score"
 
+
+    agg_id = str(uuid.uuid4())
     rootDir = os.getcwd()
     output_path = f"{rootDir}/output"
-    output_dataset_path = f"{output_path}/output_{dataset_name}_layerone-{agg_method_layer_one}_layertwo-{agg_method_layer_two}_{outlayer}_topk{top_k}_topm{top_m}_{mode}"
+    csv_index_file = f"{rootDir}/index.csv"
+    #output_dataset_path = f"{output_path}/output_{dataset_name}_layerone-{agg_method_layer_one}_layertwo-{agg_method_layer_two}_{outlayer}_topk{top_k}_topm{top_m}_{mode}_l_size{l_size}"
+    output_dataset_path = f"{output_path}/{agg_id}"
     output_rk_fusion_path = f"{output_dataset_path}/rk_fusions_{dataset_name}"
     output_rankedlists = f"{rootDir}/dataset/{dataset_name}/ranked_lists/"
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    if not os.path.exists("./output"):
-        os.makedirs("./output")
+    if not os.path.exists(csv_index_file):
+            
+        with open(csv_index_file, 'w', newline='') as file:
+            writer = csv.writer(file, delimiter=";")
+            # Escreva o cabeçalho do arquivo CSV
+            writer.writerow(['Index','DataSet', 'Layer One', 'Layer Two', 'Outlayer', "Top K", "Top M", "Alpha", "Effectiveness", "L Size", "MAP", "Data Folder"]) 
 
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    if not os.path.exists(output_dataset_path):
+        os.makedirs(output_dataset_path)
 
     if not os.path.exists(output_rk_fusion_path):
         os.makedirs(output_rk_fusion_path)
@@ -56,7 +62,7 @@ def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mo
         os.makedirs(output_rankedlists)
 
 
-    return output_dataset_path, output_rk_fusion_path, output_rankedlists
+    return output_dataset_path, output_rk_fusion_path, output_rankedlists, csv_index_file, agg_id
 
 # Função responsável por obter e armazenar o endereço dos arquivos de listas e classes
 def get_lists_and_classes_txt(input_path: str):
@@ -159,7 +165,7 @@ def get_borda_ranked_lists(dataset_name: str, output_dataset_path: str):
     file = f"{output_dataset_path}/{dataset_name}"
 
     try:
-        data_frame = pd.read_csv(f"{file}.csv")
+        data_frame = pd.read_csv(f"{file}.csv", delimiter=';')
     except:
         # If file couldn't be oppened return a message
         print(f"{file}.csv couldn't be found!")

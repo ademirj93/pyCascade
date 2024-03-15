@@ -1,8 +1,8 @@
-import os, random
-import matplotlib
-matplotlib.use('TkAgg')
+import os, random, matplotlib
 import matplotlib.pyplot as plt
 from PIL import Image
+
+matplotlib.use('TkAgg')
 
 current_path = os.getcwd()
 # Caminho para a pasta com as imagens

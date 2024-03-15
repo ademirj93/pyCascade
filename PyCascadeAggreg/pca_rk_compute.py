@@ -8,38 +8,40 @@ from tkinter import messagebox
 
 
 #way_features = f'{rootDir}/dataset/{dataset_name}/features/'
-def compute_rklists_from_feat(dataset_name:str):
+def compute_rklists_from_feat(dataset_name: str, l_size: int):
     # Função para abrir a janela de seleção de arquivo
     rootDir = os.getcwd()
     
-    def set_path():
+    #def set_path():
         # Abre a janela para seleção de arquivo
-        way_file = filedialog.askdirectory(title=f"{dataset_name} selecione o caminho das features!")
+        #way_file = filedialog.askdirectory(title=f"{dataset_name} selecione o caminho das features!")
         
-        if not way_file:
-            window.destroy()
-            exit()
+        #if not way_file:
+            #window.destroy()
+            #exit()
         # Atualiza o conteúdo da variável com o caminho selecionado
-        way_features.set(way_file)
-        return way_file
+        #way_features.set(way_file)
+        #return way_file
     # Cria uma janela tkinter
-    window = tk.Tk()
+    #window = tk.Tk()
 
     # Define as dimensões da janela
-    window.geometry("1x1")
-    window.withdraw()
+    #window.geometry("1x1")
+    #window.withdraw()
 
-    way_features = tk.StringVar()
+    #way_features = tk.StringVar()
+    way_features = f"{rootDir}/dataset/{dataset_name}/features" 
 
     #messagebox.showinfo("Seleção do diretório das features", "Selecine o diretório onde as features a serem ranqueadas estão salvas.")
-    way_file = set_path()
-
-    if len(way_features.get()) == len(way_file):
-        way_features = way_features.get()
-        window.destroy()
+    #way_file = set_path()
+    way_file = f"{rootDir}/dataset/{dataset_name}/features" 
+    #if len(way_features.get()) == len(way_file):
+            
+        #way_features = way_features.get()
+        #window.destroy()
 
     # Inicia o loop principal da janela tkinter
-    window.mainloop()
+    #window.mainloop()
 
     #way_features = way_features.get()
 
@@ -75,14 +77,12 @@ def compute_rklists_from_feat(dataset_name:str):
 
 
         rk_save = f'{rootDir}/dataset/{dataset_name}/ranked_lists/{feat_name}.txt'
-
-        #Tamanho que quer calcular do RK
-        size = len(features)
+            
         print(f"Calculando ranking das features {feat_name}")
 
         #Calculando RK
         tree = BallTree(features) #indexing
-        _, rks = tree.query(features, k=size) #Fazendo as querys
+        _, rks = tree.query(features, k=l_size) #Fazendo as querys
 
 
         #Salvando o rk

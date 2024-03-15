@@ -1,0 +1,2 @@
+Execução 4faaf73e-fb8e-462c-99cb-afa2a89351f7 do dataset corel5k com parâmetros L = 2500, K = 100, m = 3 e alpha = 0.5 rdpacxcprr 
+ 
