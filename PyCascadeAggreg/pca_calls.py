@@ -1,14 +1,22 @@
-import os
-from itertools import zip_longest
+import os, time
 import PyCascadeAggreg.pca_utils as utils
 import PyCascadeAggreg.pca_effectiveness as effectiv
 import PyCascadeAggreg.pca_savefiles as savefile
 import PyCascadeAggreg.pca_aggregate as aggregate
 import PyCascadeAggreg.pca_rk_compute as rkc
 import PyCascadeAggreg.pca_plotlib as plotlib
+from datetime import datetime
 
-def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_one: str, agg_method_layer_two: str, outlayer: str, number_combinations: int, evall_mode: str, alpha: float, l_size: int):
+
+def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_one: str, agg_method_layer_two: str, outlayer: str, number_combinations: int, evall_mode: str, alpha: float, l_size: int, top_m_lt_type: str):
     
+    # Obtém a data e hora atuais
+    date_raw = datetime.now()
+    # Formata a data e hora no formato desejado
+    date_formated = date_raw.strftime("%d/%m/%y %H:%M:%S")
+
+    initial_time = time.time()
+
     # Valida o valor minimo do top M, calcula o tamanho da saida da cascata e valida o modo de estimativa de eficácia
     # cascade_size: int -> Número de elementos resultante da combinações da cascata
     # evall_mode: str
@@ -34,7 +42,7 @@ def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_o
 
     print("\nCalculando valores do MAP, Precision e Recall...")
 
-    utils.get_all_eval(dataset_path, output_dataset_path, outlayer)
+    utils.get_all_eval(dataset_path, output_dataset_path, outlayer, l_size)
 
     authority, reciprocal = effectiv.call_compute_descriptors_effectiveness(top_k, f"{dataset_path}/ranked_lists", outlayer) 
 
@@ -54,9 +62,13 @@ def cascade_execute(dataset_name: str,top_k: int, top_m: int, agg_method_layer_o
 
     utils.get_borda_ranked_lists(f"{dataset_name}_cascade", output_dataset_path)
 
-    map_result = aggregate.second_layer_fusion(agg_method_layer_two, dataset_path, evall_mode, output_dataset_path, output_rk_fusion_path, alpha, lists_file_path, classes_file_path,agg_method_layer_one, l_size)
+    map_result, top_m_lt = aggregate.second_layer_fusion(agg_method_layer_two, dataset_path, evall_mode, output_dataset_path, output_rk_fusion_path, alpha, lists_file_path, classes_file_path,agg_method_layer_one, top_m, l_size, top_m_lt_type)
 
-    savefile.save_index(csv_index_file, agg_index, dataset_name, agg_method_layer_one, agg_method_layer_two, outlayer, top_k, top_m, alpha, evall_mode, l_size, map_result, output_dataset_path)
+    final_time = time.time()
+    run_time = final_time - initial_time
 
+    savefile.save_index(date_formated,csv_index_file, agg_index, dataset_name, agg_method_layer_one, agg_method_layer_two, outlayer, top_k, top_m,top_m_lt_type, top_m_lt, alpha, evall_mode, l_size, map_result,run_time, output_dataset_path)
+    
     plotlib.plot_dot_graph(output_dataset_path, dataset_name, top_k, top_m)
+
     return

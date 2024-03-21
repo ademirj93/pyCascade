@@ -5,7 +5,7 @@ import PyCascadeAggreg.pca_utils as utils
 import PyCascadeAggreg.pca_evaluation as evall
 
 
-def save_results_evalluation(output_file_path: str, files: list, input_path: str,list_file_path: str, classes_file_path:str, dataset_size: int, N=5):
+def save_results_evalluation(output_file_path: str, files: list, input_path: str,list_file_path: str, classes_file_path:str, dataset_size: int,l_size: int, N=5):
         
     header = ["descriptor", "precision", "recall", "MAP"]
 
@@ -30,7 +30,7 @@ def save_results_evalluation(output_file_path: str, files: list, input_path: str
 
         precision, precision_list, recall, recall_list = evall.get_precion_and_recall(
             ranked_list, class_list, N)
-        MAP, MAP_list = evall.get_MAP(ranked_list, class_list, dataset_size)
+        MAP, MAP_list = evall.get_MAP(ranked_list, class_list, l_size)
 
         result = [file.split(".")[0], precision, recall, MAP]
 
@@ -137,10 +137,10 @@ def save_layer_one_aggreg(output_dataset_path: str, dataset_name: str, field_key
 
     return
 
-def save_index(csv_index_file: str, agg_index: str, dataset_name: str, agg_method_layer_one: str, agg_method_layer_two: str, outlayer: str, top_k: int, top_m: int,alpha: float , effectiveness_mode: str,  l_size: int, map_result: float, data_full_path: str):
+def save_index(date_ex: str, csv_index_file: str, agg_index: str, dataset_name: str, agg_method_layer_one: str, agg_method_layer_two: str, outlayer: str, top_k: int, top_m: int,top_m_lt_type: str, top_m_lt: int, alpha: float , effectiveness_mode: str,  l_size: int, map_result: float, run_time: float ,data_full_path: str):
 
     with open(csv_index_file, 'a', newline='') as file:
         writer = csv.writer(file, delimiter=";")
-        writer.writerow([agg_index, dataset_name, agg_method_layer_one, agg_method_layer_two, outlayer, top_k, top_m, alpha, effectiveness_mode, l_size, map_result, data_full_path]) 
+        writer.writerow([date_ex ,agg_index, dataset_name, agg_method_layer_one, agg_method_layer_two, outlayer, top_k, top_m, top_m_lt_type, top_m_lt, alpha, effectiveness_mode, l_size, map_result, run_time,data_full_path]) 
 
     return

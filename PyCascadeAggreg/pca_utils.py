@@ -50,7 +50,7 @@ def paths_creations(dataset_name: str, top_k: int, top_m: int, outlayer: str, mo
         with open(csv_index_file, 'w', newline='') as file:
             writer = csv.writer(file, delimiter=";")
             # Escreva o cabeçalho do arquivo CSV
-            writer.writerow(['Index','DataSet', 'Layer One', 'Layer Two', 'Outlayer', "Top K", "Top M", "Alpha", "Effectiveness", "L Size", "MAP", "Data Folder"]) 
+            writer.writerow(['Date','Index','DataSet', 'Layer One', 'Layer Two', 'Outlayer', "Top K", "Top M", "Top M Layer Two type", "Top M Layer Two","Alpha", "Effectiveness", "L Size", "MAP", 'Execution Time (s)', "Path"]) 
 
     if not os.path.exists(output_dataset_path):
         os.makedirs(output_dataset_path)
@@ -211,7 +211,7 @@ def get_borda_ranked_lists(dataset_name: str, output_dataset_path: str):
 
     return
 
-def get_all_eval(input_path: str,  output_dataset_path: str, outlayer: str):
+def get_all_eval(input_path: str,  output_dataset_path: str, outlayer: str, l_size: int):
 
     # Coletando a string do nome do dataset
     dataset_name = input_path.split("/")[-1]
@@ -233,6 +233,6 @@ def get_all_eval(input_path: str,  output_dataset_path: str, outlayer: str):
     files.sort()
 
     # Chama a função de salvamento do arquivo CSV
-    savefiles.save_results_evalluation(output_file_path, files, input_path,list_file_path, classes_file_path, dataset_size)
+    savefiles.save_results_evalluation(output_file_path, files, input_path,list_file_path, classes_file_path, dataset_size, l_size)
 
     return 

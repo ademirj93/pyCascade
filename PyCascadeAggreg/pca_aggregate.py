@@ -116,7 +116,7 @@ def first_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, top
     return
 
 
-def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, output_dataset_path: str, output_rk_fusion_path: str, alpha: float, lists_file_path: str, classes_file_path: str, fisrt_layer_method: str, l_size: int):
+def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, output_dataset_path: str, output_rk_fusion_path: str, alpha: float, lists_file_path: str, classes_file_path: str, fisrt_layer_method: str, top_m: int, l_size: int, top_m_type: str):
     
     print("\nIniciado o processo de agregação da segunda camada...")
 
@@ -132,8 +132,17 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ou
 
     ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path)]
 
-    top_m = int(math.ceil(len(os.listdir(output_rk_fusion_path)) * alpha))
-    
+    match top_m_type.lower():
+        case "exit_fusions": 
+            top_m = int(math.ceil(len(os.listdir(output_rk_fusion_path)) * alpha))
+        case "alpha_m": 
+            top_m = int(math.ceil(top_m * alpha))
+        case "m_raw": 
+            top_m = top_m
+        case _: 
+            print("\nOpção de seleção de elementos da segunda camada não identificado!")
+            exit()
+
     descriptors = read_list_top_m(f"{dataset_path}_cascade", output_dataset_path, evall_mode, top_m)
     
     ranked_lists = []
@@ -174,4 +183,4 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ou
 
     print("Finalizado com sucesso!")
     
-    return MAP_value
+    return MAP_value, top_m
