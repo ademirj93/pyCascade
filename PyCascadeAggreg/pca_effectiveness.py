@@ -124,10 +124,9 @@ def call_compute_descriptors_effectiveness(top_k: int, input_path: str, outlayer
         result = compute_descriptors_effectiveness(effectiveness_function, top_k, ranked_lists, descriptors)
         
         # Switch para definir em qual estimativa o código esta iterando para armazenar o resultado na variável correta
-        match effectiveness_function:
-            case "authority":
+        if effectiveness_function == "authority":
                 authority = result
-            case "reciprocal":
+        elif effectiveness_function == "reciprocal":
                 reciprocal = result
 
     print("Finalizado com sucesso!")
