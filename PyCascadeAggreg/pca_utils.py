@@ -126,35 +126,33 @@ def set_filter_outlayer(file_list: list, option: str):
     rootDir = os.getcwd()
 
     # Switch case para definir o tipo de outlayer escolhido
-    match option.lower():
-        
-        case "outlayer_file":
-            outlayer = f"{rootDir}/outlayer.txt"
+    if option.lower() == "outlayer_file":
+        outlayer = f"{rootDir}/outlayer.txt"
 
-            try:
-                with open(outlayer, "r") as data:
-                    outlayer = [element.strip() for element in data.readlines()]
-                print("\nLista de outlayers lida com sucesso!")
-            except:
-                print(
-                f"\nOutlayer {outlayer} não localizado, a execução ocorrerá sem aplicação de filtro!")
-            outlayer = []
+        try:
+            with open(outlayer, "r") as data:
+                outlayer = [element.strip() for element in data.readlines()]
+            print("\nLista de outlayers lida com sucesso!")
+        except:
+            print(
+            f"\nOutlayer {outlayer} não localizado, a execução ocorrerá sem aplicação de filtro!")
+        outlayer = []
+    
+        descriptors = [element for element in file_list if element not in outlayer]
         
-            descriptors = [element for element in file_list if element not in outlayer]
-        
-        case "only_nn_descriptors":
+    elif option.lower() ==  "only_nn_descriptors":
             
-            print("\nFiltrando ranqueadores CNN e Transformers!")
-            descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element or "cnn-" in element or "swintf" in element or "VIT-" in element or "vit-" in element]
-        
-        case "only_classic_descriptors":
+        print("\nFiltrando ranqueadores CNN e Transformers!")
+        descriptors = [element for element in file_list if "CNN-" in element or "rks_" in element or "cnn-" in element or "swintf" in element or "VIT-" in element or "vit-" in element]
+    
+    elif option.lower() == "only_classic_descriptors":
 
-            print("\nFiltrando ranqueadores clássicos!")
-            descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element and "cnn-" not in element and "swintf" not in element and "VIT-" not in element and "vit-" not in element]
+        print("\nFiltrando ranqueadores clássicos!")
+        descriptors = [element for element in file_list if "CNN-" not in element and "rks_" not in element and "cnn-" not in element and "swintf" not in element and "VIT-" not in element and "vit-" not in element]
 
-        case _:
-            print("\nOpção de filtragem desconhecida!")
-            exit()
+    else:
+        print("\nOpção de filtragem desconhecida!")
+        exit()
         
     return descriptors
 
