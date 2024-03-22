@@ -132,16 +132,15 @@ def second_layer_fusion(list_method: str, dataset_path: str, evall_mode: str, ou
 
     ranked_lists_files = [file for file in os.listdir(output_rk_fusion_path)]
 
-    match top_m_type.lower():
-        case "exit_fusions": 
+    if top_m_type.lower() == "exit_fusions": 
             top_m = int(math.ceil(len(os.listdir(output_rk_fusion_path)) * alpha))
-        case "alpha_m": 
+    elif top_m_type.lower() == "alpha_m": 
             top_m = int(math.ceil(top_m * alpha))
-        case "m_raw": 
+    elif top_m_type.lower() == "m_raw": 
             top_m = top_m
-        case _: 
-            print("\nOpção de seleção de elementos da segunda camada não identificado!")
-            exit()
+    else: 
+        print("\nOpção de seleção de elementos da segunda camada não identificado!")
+        exit()
 
     descriptors = read_list_top_m(f"{dataset_path}_cascade", output_dataset_path, evall_mode, top_m)
     

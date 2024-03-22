@@ -13,16 +13,16 @@ def validate_data(top_m: int, number_combinations: int, evall_mode: str):
         exit()
     
     #Switch para definição e validação do modo de estimativa a ser considerado
-    match evall_mode.upper():
-        case "B":
-            evall_mode = "borda score"
-        case "A":
-            evall_mode = "authority"
-        case "R":
-            evall_mode = "reciprocal"
-        case _:
-            print("\nOpção de estimativa de eficácia (Borda (b), Authority(a) ou Reciprocal(r)) não reconhecida!")
-            exit()    
+    
+    if evall_mode.upper() == "B":
+        evall_mode = "borda score"
+    elif evall_mode.upper() == "A":
+        evall_mode = "authority"
+    elif evall_mode.upper() == "R":
+        evall_mode = "reciprocal"
+    else:
+        print("\nOpção de estimativa de eficácia (Borda (b), Authority(a) ou Reciprocal(r)) não reconhecida!")
+        exit()
 
     return cascade_size, evall_mode
 
